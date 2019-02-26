@@ -1,5 +1,9 @@
-# We auto-enable a runit service by default...
-RUNIT_AUTO_ENABLE ??= "enable"
+# if the feature is turned on for the Distro, we want to FORCE depenency to ensure
+# "runit" gets packaged on the target image...
+RDEPENDS_${PN} += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', 'runit', '', d)}"
+
+# Set up some default behaviors
+RUNIT_SERVICES ??= ""
 
 # This class will be included in any recipe that supports runit services configs,
 # even if runit is not in DISTRO_FEATURES.  As such don't make any changes
@@ -50,3 +54,37 @@ python rm_sysvinit_initddir() {
             shutil.rmtree(sysv_initddir)
 }
 do_install[postfuncs] += "rm_sysvinit_initddir "
+
+# We expect the services to be enabled per package, because it's cleaner that way- if you specify 
+# each service, either with .once or .log, then this function will package up services defaults
+# accordingly... 
+enable_services() {
+	cd ${D}${sysconfdir}
+	install -d runit/runsvdir
+	install -d runit/runsvdir/once
+	install -d runit/runsvdir/default
+	for svc in ${RUNIT_SERVICES}; do
+		log=0
+		once=0
+		oncename=$(basename $svc .log)
+		if [ "$oncename" != "$svc" ]; then
+			log=1
+		fi
+		servicename=$(basename $oncename .once)
+		if [ "$servicename" != "$oncename" ]; then
+			# Goes into the default services dir.
+			linkpath="runit/runsvdir/default"
+		else
+			# Goes into the once services dir.
+			linkpath="runit/runsvdir/once"
+		fi
+		ln -s sv/$servicename $linkpath
+
+		# FIXME - Add logging support...
+		
+	done
+	cd runit/runsvdir
+	ln -s default current
+}
+do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', 'enable_services', '', d)} "
+
