@@ -3,8 +3,6 @@ LICENSE = "BSD"
 HOMEPAGE = "https://github.com/madscientist42/runit"
 LIC_FILES_CHKSUM = "file://COPYING.md;md5=3cf56266ad83a2793f171707969e46d1"
 
-PROVIDES += "virtual/runit virtual/init"
-
 SRC_URI = " \
 	git://github.com/madscientist42/runit.git;protocol=https \
 	"
@@ -16,7 +14,9 @@ S = "${WORKDIR}/git"
 inherit cmake 
 
 # Do some additional OpenEmbedded specific tasks for install
-do_install_append() {
+do_runit-init_as_init() {
 	# Tie to init, so we run instead of busybox or sysvinit
-	ln -s /sbin/runit-init /sbin/init
+	cd ${D}/sbin
+	ln -s runit-init init
 }
+do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit-init', 'do_runit-init_as_init', '', d)} "
