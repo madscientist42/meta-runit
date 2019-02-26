@@ -14,9 +14,9 @@ S = "${WORKDIR}/git"
 inherit cmake 
 
 # Do some additional OpenEmbedded specific tasks for install if we're told we're using runit-init as init.
-do_runit-init_as_init() {
+do_runit_init_as_init() {
 	# Tie to init, so we run instead of busybox or sysvinit
-	cd ${D}/sbin
-	ln -s runit-init init
+    install -d ${D}/sbin
+	ln -s ${D}/sbin/runit-init ${D}/sbin/init
 }
-do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit-init', 'do_runit-init_as_init', '', d)} "
+do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit-init', 'do_runit_init_as_init', '', d)} "
