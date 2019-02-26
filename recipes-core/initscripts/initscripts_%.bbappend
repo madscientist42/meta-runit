@@ -2,12 +2,14 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 # Attach runit support...
 inherit runit
+RDEPENDS_${PN} += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', 'runit', '', d)}"
 	       	  
 # Append a few new files for the purposes of providing runit scripting
 SRC_URI += " \
 	file://1 \
 	file://2 \
 	file://3 \
+    file://functions \
 	file://core-services/00-pseudofs.sh \
 	file://core-services/01-static-devnodes.sh \
 	file://core-services/02-kmods.sh\
@@ -31,4 +33,17 @@ install_runit_initscripts() {
 	done 
 }
 do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', 'install_runit_initscripts', '', d)} "
+
+# IF we're set to run with runit as init, we need to clean some junk back out. 
+# (I know, I know...we need to properly integrate and skip unneeded steps...
+#  Once this is on a more even keel with systemd's integration, we can revisit...)
+# We don't, for example, need the rc<x>.d directories in the system anymore.
+remove_sysvinit_unneeded() {
+    cd ${D}/etc
+    rm -rvf rc*.d
+}
+DO_CLEANUP = "${@bb.utils.contains('DISTRO_FEATURES', 'sysvinit', '', 'remove_sysvinit_unneeded', d)}"
+do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit-init', '${DO_CLEANUP}', '', d)} "
+
+
 
