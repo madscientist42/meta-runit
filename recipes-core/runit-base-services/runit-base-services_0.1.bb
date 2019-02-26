@@ -1,10 +1,11 @@
 DESCRIPTION = "Baseline runit services configuration set"
 LICENSE = "MIT"
-LIC_FILES_CHKSUM = "file://COPYING;md5=3cf56266ad83a2793f171707969e46d1"
+LIC_FILES_CHKSUM = "file://COPYING;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
 SRC_URI = " \
     file://COPYING \
-    file://sv \
+    file://sv/getty-generic/run \
+    file://sv/getty-generic/finish \
     "
 
 S = "${WORKDIR}"
@@ -30,22 +31,23 @@ install_serial_consoles() {
 
             # With it in hand, dynamically generate runit service entries and enable them in the 
             # default set out of box...
-            install -d ${D}{runit_svcdir}/getty-${ttydev}
-            cd ${D}{runit_svcdir}/getty-${ttydev}
-            ln -s ../getty-generic/run run
-            ln -s ../getty-generic/run finish
-            echo 'GETTY_ARGS="-L"' > conf
-            echo 'if [ -x /sbin/agetty -o -x /bin/agetty ]; then' >> conf
-	        echo '    # util-linux specific settings' >> conf
-	        echo '    GETTY_ARGS="${GETTY_ARGS} -8"' >> conf
-            echo 'fi' >> conf
-            echo 'BAUD_RATE=${baudrate}' >> conf
-            echo 'TERM_NAME=vt100' >> conf
-            cd ${D}{runit_runsvdir}/default
-            ln -s ${D}{runit_svcdir}/getty-${ttydev} 
+            svcpath="${D}${runit-svcdir}/getty-${ttydev}"
+            conffile="${svcpath}/conf"
+            install -d ${svcpath}
+            ln -s ../getty-generic/run ${svcpath}
+            ln -s ../getty-generic/finish ${svcpath}
+            echo 'GETTY_ARGS="-L"' > ${conffile}
+            echo 'if [ -x /sbin/agetty -o -x /bin/agetty ]; then' >> ${conffile}
+	        echo '    # util-linux specific settings' >> ${conffile}
+	        echo '    GETTY_ARGS="${GETTY_ARGS} -8"' >> ${conffile}
+            echo 'fi' >> ${conffile}
+            echo 'BAUD_RATE='$baudrate >> ${conffile}
+            echo 'TERM_NAME=vt100' >> ${conffile}
+            ln -s ${runit-svcdir}/getty-${ttydev} ${D}${runit-runsvdir}/default
 		done
 	fi    
 }
 DO_SERIAL_CONSOLES = "${@bb.utils.contains('DISTRO_FEATURES', 'sysvinit', '', 'install_serial_consoles', d)}"
 do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', '${DO_SERIAL_CONSOLES}', '', d)} "
+
 
