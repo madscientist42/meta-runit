@@ -5,45 +5,9 @@
 msg "Remounting rootfs read-only..."
 mount -o remount,ro / || emergency_shell
 
-if [ -x /sbin/dmraid -o -x /bin/dmraid ]; then
-    msg "Activating dmraid devices..."
-    dmraid -i -ay
-fi
-
 if [ -x /bin/btrfs ]; then
     msg "Activating btrfs devices..."
     btrfs device scan || emergency_shell
-fi
-
-if [ -x /sbin/vgchange -o -x /bin/vgchange ]; then
-    msg "Activating LVM devices..."
-    vgchange --sysinit -a y || emergency_shell
-fi
-
-if [ -e /etc/crypttab ]; then
-    msg "Activating encrypted devices..."
-    awk -f /etc/runit/crypt.awk /etc/crypttab
-
-    if [ -x /sbin/vgchange -o -x /bin/vgchange ]; then
-        msg "Activating LVM devices for dm-crypt..."
-        vgchange --sysinit -a y || emergency_shell
-    fi
-fi
-
-if [ -e /etc/zfs/zpool.cache -a -x /usr/bin/zfs ]; then
-    msg "Activating ZFS devices..."
-    zpool import -c /etc/zfs/zpool.cache -N -a
-
-    msg "Mounting ZFS file systems..."
-    zfs mount -a
-
-    msg "Sharing ZFS file systems..."
-    zfs share -a
-
-    # NOTE(dh): ZFS has ZVOLs, block devices on top of storage pools.
-    # In theory, it would be possible to use these as devices in
-    # dmraid, btrfs, LVM and so on. In practice it's unlikely that
-    # anybody is doing that, so we aren't supporting it for now.
 fi
 
 [ -f /fastboot ] && FASTBOOT=1
@@ -67,4 +31,21 @@ msg "Mounting rootfs read-write..."
 mount -o remount,rw / || emergency_shell
 
 msg "Mounting all non-network filesystems..."
-mount -a -t "nosysfs,nonfs,nonfs4,nosmbfs,nocifs" -O no_netdev || emergency_shell
+# We're going to do this in a small millisleep loop and then if 
+# it chokes after several times, go to the shell...
+err="1"
+while [ "$err" == "1" ]; do
+    # mount -a and see if we mount.  If it chokes we want to see 
+    # the fail on the console/console-log...
+    mount -a -t "nosysfs,nonfs,nonfs4,nosmbfs,nocifs" -O no_netdev 
+    if [ $? -eq 0 ]; then 
+        err="0"
+    else 
+        # Doze for 200 msec...
+        millisleep 200
+    fi 
+done
+if [ "$err" == "1" ] ; then 
+    msg_err Mount of network filesystems FAILED, going to an emergency_shell...
+    emergency_shell
+fi
