@@ -4,6 +4,18 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
 SRC_URI = " \
     file://COPYING \
+	file://1 \
+	file://2 \
+	file://3 \
+    file://functions \
+	file://core-services/00-pseudofs.sh \
+	file://core-services/01-static-devnodes.sh \
+	file://core-services/02-kmods.sh\
+	file://core-services/02-udev.sh \
+	file://core-services/03-console-setup.sh \
+	file://core-services/03-filesystems.sh \
+	file://core-services/04-swap.sh \
+	file://core-services/05-misc.sh \
     file://sv/getty-generic/run \
     file://sv/getty-generic/finish \
     "
@@ -17,6 +29,20 @@ inherit runit
 # run-once stuff in "initscripts" as appended by the .bbappend.
 RUNIT-SERVICES = " \
     "
+
+# IF we're set to run with runit in the mix, copy in some new things...
+install_runit_initscripts() {
+    # Set up the core-services...
+	install -d -m 0755 ${D}/etc/runit
+	install -d -m 0755 ${D}/etc/runit/core-services
+	install -m 0755 ${WORKDIR}/1 ${D}/etc/runit
+	install -m 0755 ${WORKDIR}/2 ${D}/etc/runit
+	install -m 0755 ${WORKDIR}/3 ${D}/etc/runit
+	for I in ${WORKDIR}/core-services/* ; do
+		install -m 0755 $I ${D}/etc/runit/core-services
+	done 
+}
+do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', 'install_runit_initscripts', '', d)} "
 
 # Handle the getty part of the SERIAL_CONSOLES specified in here.
 install_serial_consoles() {
