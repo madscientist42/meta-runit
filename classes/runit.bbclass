@@ -38,10 +38,12 @@ do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', 'inst
 # left in there, but as people add services for runit in recipes or as the overlays
 # in this metadata layer, we want to remove them...)
 # 
-# FIXME - This just blindly removes everything in the packaging for sysvinit stuff
+# FIXME - This just blindly removes everything in the packaging for sysvinit and systemd stuff
 #         For now, this is, "fine," but needs to be revisited with "better".
 cleanup_sysvinit_dirs() {
     rm -rvf ${D}/etc/rc*.d
+    find ${D}/etc/ -name 'init.d' -exec rm -rf {} \;
+    find ${D}/etc/ -name 'system.d' -exec rm -rf {} \;
 }
 DO_SYSVINIT_CLEANUP = "${@bb.utils.contains('DISTRO_FEATURES', 'sysvinit', '', 'cleanup_sysvinit_dirs', d)}"
 do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', '${DO_SYSVINIT_CLEANUP}', '', d)} "
