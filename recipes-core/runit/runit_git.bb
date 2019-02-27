@@ -13,6 +13,18 @@ S = "${WORKDIR}/git"
 
 inherit cmake 
 
+# Make our lives a bit easier.  While the install works RIGHT for CMake for the packaging, we
+# want a bit of init-scripting legerdemain installed up-front as a part of this package (We
+# want/need, to make our lives easier, to establish the /etc/runit/runsvdir directory structure
+# enough to count for setting "current" that belongs to runit to be linked to "default"
+setup_runsvdir() {
+    install -d -m -0755 ${D}/etc/runit/runsvdir
+    install -d -m -0755 ${D}/etc/runit/runsvdir/default
+    install -d -m -0755 ${D}/etc/runit/runsvdir/once
+    ln -s /etc/runit/runsvdir/default ${D}/etc/runit/runsvdir/current
+}
+do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', 'setup_runsvdir', '', d)} "
+
 # Do some additional OpenEmbedded specific tasks for install if we're told we're using runit-init as init.
 do_runit_init_as_init() {
 	# Tie to init, so we run instead of busybox or sysvinit
