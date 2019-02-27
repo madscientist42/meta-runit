@@ -66,7 +66,7 @@ enable_default_services() {
 	install -d ${D}${runit-runsvdir}
 	install -d ${D}${runit-runsvdir}/once
 	install -d ${D}${runit-runsvdir}/default   
-    for svc in ${D}${runit-svcdir}; do
+    for svc in ${D}${runit-svcdir}/*; do
         ln -s ${runit-svcdir}/$svc ${D}${runit-runsvdir}/default
     done
 }
