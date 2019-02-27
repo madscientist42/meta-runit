@@ -6,7 +6,7 @@
 runlevel=default
 for arg in $(cat /proc/cmdline); do
     if [ -d /etc/runit/runsvdir/"$arg" ]; then
-        echo "Runlevel detected: '$arg' (via kernel cmdline)"
+        msg "Runlevel detected: '$arg' (via kernel cmdline)"
         runlevel="$arg"
     fi
 done

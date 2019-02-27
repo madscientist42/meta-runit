@@ -1,7 +1,5 @@
 # vim: set ts=4 sw=4 et:
 
-. /etc/runit/functions
-
 if [ -x /sbin/sysctl -o -x /bin/sysctl ]; then
     msg "Loading sysctl(8) settings..."
     for i in /run/sysctl.d/*.conf \

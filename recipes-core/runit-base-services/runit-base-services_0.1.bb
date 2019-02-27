@@ -4,18 +4,19 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
 SRC_URI = " \
     file://COPYING \
-	file://1 \
-	file://2 \
-	file://3 \
+    file://1 \
+    file://2 \
+    file://3 \
     file://functions \
-	file://core-services/00-pseudofs.sh \
-	file://core-services/01-static-devnodes.sh \
-	file://core-services/02-kmods.sh\
-	file://core-services/02-udev.sh \
-	file://core-services/03-console-setup.sh \
-	file://core-services/03-filesystems.sh \
-	file://core-services/04-swap.sh \
-	file://core-services/05-misc.sh \
+    file://core-services/00-pseudofs.sh \
+    file://core-services/01-static-devnodes.sh \
+    file://core-services/02-kmods.sh\
+    file://core-services/03-console-setup.sh \
+    file://core-services/03-filesystems.sh \
+    file://core-services/03-udev.sh \
+    file://core-services/04-swap.sh \
+    file://core-services/05-misc.sh \
+    file://core-services/9999-level1-complete.sh \
     file://sv/getty-generic/run \
     file://sv/getty-generic/finish \
     "

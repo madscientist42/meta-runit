@@ -23,4 +23,4 @@ fi
 mkdir -p /run/runit
 install -m100 /dev/null /run/runit/stopit
 
-msg "Initialization complete, running stage 2..."
+msg_ok "Initialization complete, running stage 2..."
