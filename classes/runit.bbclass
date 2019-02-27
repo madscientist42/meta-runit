@@ -60,7 +60,6 @@ enable_default_services() {
     for svc in ${D}${runit-svcdir}; do
         ln -s ${runit-svcdir}/svc ${D}${runit-runsvdir}/default
     done
-	ln -s ${runit-svcdir}/$servicename ${D}${runit-runsvdir}/$linkpath
 }
 
 enable_services() {
@@ -83,7 +82,6 @@ enable_services() {
 		# FIXME - Add logging support...
 		
 	done
-	ln -s ${runit-runsvdir}/default ${D}${runit-runsvdir}/current
 }
 DO_DEFAULT_SVCS = "${@bb.utils.contains('RUNIT-SERVICES', 'DEFAULT', 'enable_default_services', 'enable_services', d)}"
 do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', '${DO_DEFAULT_SVCS}', '', d)} "
