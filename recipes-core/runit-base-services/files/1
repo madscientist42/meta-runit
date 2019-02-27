@@ -5,7 +5,7 @@ PATH=/usr/bin:/usr/sbin
 
 . /etc/runit/functions
 
-msg "Welcome to Void!"
+msg "Welcome to Poky Linux!"
 
 [ -r /etc/rc.conf ] && . /etc/rc.conf
 

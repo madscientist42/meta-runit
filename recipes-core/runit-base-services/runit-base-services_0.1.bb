@@ -38,6 +38,7 @@ install_runit_initscripts() {
 	install -m 0755 ${WORKDIR}/1 ${D}/etc/runit
 	install -m 0755 ${WORKDIR}/2 ${D}/etc/runit
 	install -m 0755 ${WORKDIR}/3 ${D}/etc/runit
+    install -m 0755 ${WORKDIR}/functions ${D}/etc/runit
 	for I in ${WORKDIR}/core-services/* ; do
 		install -m 0755 $I ${D}/etc/runit/core-services
 	done 
