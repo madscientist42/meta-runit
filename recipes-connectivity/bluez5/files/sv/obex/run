@@ -1,0 +1,7 @@
+#!/bin/sh -e
+
+# Keeping it simple.  Check for bluetooth and if check fails, exit.
+sv -w4 check bluetooth
+
+# Then just launch, daemonized, in the manner runit does things...
+exec 2>&1 /usr/libexec/bluetooth/obexd
