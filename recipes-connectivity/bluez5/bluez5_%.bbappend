@@ -18,12 +18,17 @@ RUNIT_BT_SVCS = " \
     ${runit-svcdir}/bluetooth/run \
     ${runit-runsvdir}/bluetooth \
     "
-FILES_${PN} += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', '${RUNIT_BT_SVCS}', '', d)}"
+RUNIT_BT_REMOVES = " \
+    ${sysconfdir}/init.d/bluetooth \        
+    ${datadir}/dbus-1 \
+    "
+FILES_${PN}_append = "${@bb.utils.contains('DISTRO_FEATURES', 'runit', '${RUNIT_BT_SVCS}', '', d)}"
+FILES_${PN}_remove = "${@bb.utils.contains('DISTRO_FEATURES', 'runit', '${RUNIT_BT_REMOVES}', '', d)}"
 
 RUNIT_OBEX_SVCS = " \
     ${runit-svcdir}/obex/run \
     ${runit-runsvdir}/obex \
     "
-FILES_${PN}-obex += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', '${RUNIT_OBEX_SVCS}', '', d)}"
+FILES_${PN}-obex_append = "${@bb.utils.contains('DISTRO_FEATURES', 'runit', '${RUNIT_OBEX_SVCS}', '', d)}"
     
     
