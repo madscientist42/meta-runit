@@ -18,7 +18,6 @@ SRC_URI = " \
     file://core-services/03-udev.sh \
     file://core-services/04-swap.sh \
     file://core-services/05-misc.sh \
-    file://core-services/9999-level1-complete.sh \
     file://sv/getty-generic/run \
     file://sv/getty-generic/finish \
     "
