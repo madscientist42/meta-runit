@@ -29,6 +29,6 @@ do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', 'setu
 do_runit_init_as_init() {
 	# Tie to init, so we run instead of busybox or sysvinit
     install -d ${D}/sbin
-	ln -s ${D}/sbin/runit-init ${D}/sbin/init
+	ln -s ${D}/sbin/runit ${D}/sbin/init
 }
 do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit-init', 'do_runit_init_as_init', '', d)} "
