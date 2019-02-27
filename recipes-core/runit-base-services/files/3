@@ -1,9 +1,8 @@
 #!/bin/sh
 # vim: set ts=4 sw=4 et:
 
-PATH=/usr/bin:/usr/sbin
-
 . /etc/runit/functions
+
 detect_virt
 [ -r /etc/rc.conf ] && . /etc/rc.conf
 

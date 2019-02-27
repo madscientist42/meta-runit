@@ -1,5 +1,7 @@
 # *-*-shell-*-*
 
+PATH=/bin:/usr/bin:/sbin:/usr/sbin
+
 msg() {
     # bold
     printf "\033[1m=> $@\033[m\n"
