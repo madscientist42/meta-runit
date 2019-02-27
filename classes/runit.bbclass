@@ -42,8 +42,11 @@ do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', 'inst
 #         For now, this is, "fine," but needs to be revisited with "better".
 cleanup_sysvinit_dirs() {
     rm -rvf ${D}/etc/rc*.d
-    find ${D}/etc/ -name 'init.d' -exec rm -rf {} \;
-    find ${D}/etc/ -name 'system.d' -exec rm -rf {} \;
+    dirlist=`find ${D}/etc/ -type d -name 'init.d' -print`
+    dirlist="$dirlist `find ${D}/etc/ -type d -name 'system.d' -print`"
+    for dir in $dirlist; do
+        rm -rf $dir
+    done
 }
 DO_SYSVINIT_CLEANUP = "${@bb.utils.contains('DISTRO_FEATURES', 'sysvinit', '', 'cleanup_sysvinit_dirs', d)}"
 do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', '${DO_SYSVINIT_CLEANUP}', '', d)} "
