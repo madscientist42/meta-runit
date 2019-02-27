@@ -52,18 +52,22 @@ DO_SYSVINIT_CLEANUP = "${@bb.utils.contains('DISTRO_FEATURES', 'sysvinit', '', '
 do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', '${DO_SYSVINIT_CLEANUP}', '', d)} "
 
 # Services can be enabled in one of two ways or left disabled per package.
-# If you specify service names (as they're specified in the packaging
-# under the "sv" directory...) you can specify, default (nothing), 
-# ran once (.once), and provide basic logging services (.log), with the
-# dot values appended to the end in .once.log order for each desired.
-# Additionally, if you specify, "DEFAULT" in all caps in that variable,
-# it will presume all services in the package are set to default ran.
+#
+# In the first way, if you specify "DEFAULT" in all caps in the RUNIT_SERVICES
+# list, it will presume everything is to be put in the default runlevel instead
+# of "once" runlevel part.
+# 
+# In the second way, we process it in steps much like we do SERIAL_CONSOLES
+# wherein you specify the service name to be enabled, followed by one or more
+# optional parameters where you specify "once" for run-once at start and
+# "log" to enable service specific logging from the redirected output of the
+# daemon binary, with the options being separated by semicolons.
 enable_default_services() {
 	install -d ${D}${runit-runsvdir}
 	install -d ${D}${runit-runsvdir}/once
 	install -d ${D}${runit-runsvdir}/default   
     for svc in ${D}${runit-svcdir}; do
-        ln -s ${runit-svcdir}/svc ${D}${runit-runsvdir}/default
+        ln -s ${runit-svcdir}/$svc ${D}${runit-runsvdir}/default
     done
 }
 
@@ -72,20 +76,30 @@ enable_services() {
 	install -d ${D}${runit-runsvdir}/once
 	install -d ${D}${runit-runsvdir}/default   
 
-	for svc in ${RUNIT-SERVICES}; do
-		log=0
-		servicename=$(basename $oncename .once)
-		if [ "$servicename" != "$oncename" ]; then
-			# Goes into the default services dir.
-			linkpath="default"
-		else
-			# Goes into the once services dir.
-			linkpath="once"
-		fi
-		ln -s ${runit-svcdir}/${servicename} ${D}${runit-runsvdir}/${linkpath}
-
-		# FIXME - Add logging support...
-		
+    # Do this off of what's listed...
+    tmp="${RUNIT-SERVICES}"
+	for entry in $tmp; do
+		svc=`echo $entry | awk -F ";" '{ print $1 }'`
+		option1=`echo $entry | awk -F ";" '{ print $2 }'`
+		option2=`echo $entry | awk -F ";" '{ print $3 }'`
+        
+        if [ "$option1" = "once" -o "$option2" = "once" ]; then
+            linkpath="once"
+        else
+            linkpath="default"
+        fi
+        ln -s ${runit-svcdir}/$svc ${D}${runit-runsvdir}/$linkpath  
+        if [ "$option1" = "log" -o "$option2" = "log" ]; then
+            # User has specified simple logging support for the service 
+            # (Which, technically, can be done out of the sv dir, but
+            #  this lets a user specify it even simpler than that way...)
+            logsv="${D}${runit-svcdir}/$svc/log"
+            mkdir -p $logsv
+            logsv="$logsv/run"
+            echo "#!/bin/sh" > $logsv
+            echo "exec chpst -ulog svlogd -tt $svc" >> $logsv
+            chmod a+x $logsv
+        fi      
 	done
 }
 DO_DEFAULT_SVCS = "${@bb.utils.contains('RUNIT-SERVICES', 'DEFAULT', 'enable_default_services', 'enable_services', d)}"
