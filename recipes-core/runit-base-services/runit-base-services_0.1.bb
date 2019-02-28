@@ -34,10 +34,8 @@ S = "${WORKDIR}"
 inherit runit
 
 # We want some of the services to be template ones (Like the getty-generic one...)
-# so, we'll be enabling the services selectively as they get added past the core
-# run-once stuff in "initscripts" as appended by the .bbappend.
+# so, we'll be enabling the services selectively here.
 RUNIT-SERVICES = " \
-    sulogin \
     "
 
 # IF we're set to run with runit in the mix, copy in some new things...
