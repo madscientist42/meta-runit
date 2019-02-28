@@ -26,6 +26,7 @@ SRC_URI = " \
     file://core-services/06-sysctl.sh \
     file://sv/getty-generic/run \
     file://sv/getty-generic/finish \
+    file://sv/sulogin/run \
     "
 
 S = "${WORKDIR}"
@@ -36,6 +37,7 @@ inherit runit
 # so, we'll be enabling the services selectively as they get added past the core
 # run-once stuff in "initscripts" as appended by the .bbappend.
 RUNIT-SERVICES = " \
+    sulogin \
     "
 
 # IF we're set to run with runit in the mix, copy in some new things...
