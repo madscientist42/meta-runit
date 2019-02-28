@@ -18,12 +18,15 @@ inherit cmake
 # want/need, to make our lives easier, to establish the /etc/runit/runsvdir directory structure
 # enough to count for setting "current" that belongs to runit to be linked to "default"
 setup_runsvdir() {
-    install -d -m -0755 ${D}/etc/runit/runsvdir
-    install -d -m -0755 ${D}/etc/runit/runsvdir/default
-    install -d -m -0755 ${D}/etc/runit/runsvdir/once
+    install -d -m 0755 ${D}/etc/sv
+    install -d -m 0755 ${D}/etc/runit/runsvdir
+    install -d -m 0755 ${D}/etc/runit/runsvdir/default
+    install -d -m 0755 ${D}/etc/runit/runsvdir/once
     ln -s /etc/runit/runsvdir/default ${D}/etc/runit/runsvdir/current
+    ln -s /etc/sv ${D}/service
 }
 do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', 'setup_runsvdir', '', d)} "
+FILES_${PN} += "/service"
 
 # Do some additional OpenEmbedded specific tasks for install if we're told we're using runit-init as init.
 do_runit_init_as_init() {
