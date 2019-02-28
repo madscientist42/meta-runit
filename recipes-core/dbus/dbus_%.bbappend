@@ -3,7 +3,8 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 # Add the services set(s)...
 SRC_URI += " \
-    file://sv/dbus/run \
+    file://sv/messagebus/run \
+    file://sv/messagebus/check \
     "
 
 # Next, make it a runit capable package...

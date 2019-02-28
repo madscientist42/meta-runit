@@ -1,0 +1,4 @@
+#!/bin/sh
+[ ! -d /run/dbus ] && install -m 0755 -g 996 -o 997 -d /run/dbus
+exec dbus-daemon --system --nofork --nopidfile
+
