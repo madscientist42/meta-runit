@@ -1,0 +1,25 @@
+#!/bin/sh
+
+# Defaults that can be overridden by /etc/defaults/dropbear
+DROPBEAR_RSAKEY_DIR="/etc/dropbear"
+DROPBEAR_PORT=22
+DROPBEAR_EXTRA_ARGS=
+DROPBEAR_RSAKEY_ARGS=
+
+test ! -r /etc/default/dropbear || . /etc/default/dropbear
+test ! -h /var/service/dropbear || exit 0
+test -z "$DROPBEAR_BANNER" || DROPBEAR_EXTRA_ARGS="$DROPBEAR_EXTRA_ARGS -b $DROPBEAR_BANNER"
+test -n "$DROPBEAR_RSAKEY" || DROPBEAR_RSAKEY="${DROPBEAR_RSAKEY_DIR}/dropbear_rsa_host_key"
+
+# Generate keys...
+if [ -f "$DROPBEAR_RSAKEY" -a ! -s "$DROPBEAR_RSAKEY" ]; then
+    rm $DROPBEAR_RSAKEY || true
+fi
+if [ ! -f "$DROPBEAR_RSAKEY" ]; then
+    mkdir -p ${DROPBEAR_RSAKEY%/*}
+    dropbearkey -t rsa -f $DROPBEAR_RSAKEY $DROPBEAR_RSAKEY_ARGS
+fi
+
+# Launch....
+exec /usr/sbin/dropbear -r $DROPBEAR_RSAKEY -p "$DROPBEAR_PORT" $DROPBEAR_EXTRA_ARGS 1>&2
+
