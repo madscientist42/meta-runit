@@ -2,10 +2,14 @@ DESCRIPTION = "Baseline runit services configuration set"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://COPYING;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-RDEPENDS_${PN} = "millisleep"
+RDEPENDS_${PN} = " \
+    millisleep \
+    coreutils \
+    "
 
 SRC_URI = " \
     file://COPYING \
+    file://00-volatiles \
     file://1 \
     file://2 \
     file://3 \
@@ -18,6 +22,8 @@ SRC_URI = " \
     file://core-services/03-udev.sh \
     file://core-services/04-swap.sh \
     file://core-services/05-misc.sh \
+    file://core-services/05-populate-volatile.sh \
+    file://core-services/06-sysctl.sh \
     file://sv/getty-generic/run \
     file://sv/getty-generic/finish \
     "
@@ -35,8 +41,10 @@ RUNIT-SERVICES = " \
 # IF we're set to run with runit in the mix, copy in some new things...
 install_runit_initscripts() {
     # Set up the core-services...
+    install -d -m 0755 ${D}/etc/default/volatiles
 	install -d -m 0755 ${D}/etc/runit
 	install -d -m 0755 ${D}/etc/runit/core-services
+    install -m 0644 ${WORKDIR}/00-volatiles ${D}/etc/default/volatiles
 	install -m 0755 ${WORKDIR}/1 ${D}/etc/runit
 	install -m 0755 ${WORKDIR}/2 ${D}/etc/runit
 	install -m 0755 ${WORKDIR}/3 ${D}/etc/runit
