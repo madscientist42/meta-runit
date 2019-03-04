@@ -14,6 +14,7 @@ SRC_URI = " \
     file://2 \
     file://3 \
     file://functions \
+    file://modules-load \
     file://core-services/00-pseudofs.sh \
     file://core-services/01-static-devnodes.sh \
     file://core-services/02-kmods.sh\
@@ -44,11 +45,13 @@ install_runit_initscripts() {
     install -d -m 0755 ${D}/etc/default/volatiles
 	install -d -m 0755 ${D}/etc/runit
 	install -d -m 0755 ${D}/etc/runit/core-services
+    install -d -m 0755 ${D}/sbin
     install -m 0644 ${WORKDIR}/00-volatiles ${D}/etc/default/volatiles
 	install -m 0755 ${WORKDIR}/1 ${D}/etc/runit
 	install -m 0755 ${WORKDIR}/2 ${D}/etc/runit
 	install -m 0755 ${WORKDIR}/3 ${D}/etc/runit
     install -m 0755 ${WORKDIR}/functions ${D}/etc/runit
+    install -m 0755 ${WORKDIR}/modules-load ${D}/sbin
 	for I in ${WORKDIR}/core-services/* ; do
 		install -m 0755 $I ${D}/etc/runit/core-services
 	done 
