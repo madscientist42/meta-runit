@@ -36,6 +36,9 @@ SRC_URI = " \
 
 S = "${WORKDIR}"
 
+# We're runit and additionally CMake as a recipe.  CMake's in 
+# the mix for the purposes of scooping up a few /sbin binaries
+# that we need for proper function of our base services set.
 inherit runit cmake
 
 # We want some of the services to be template ones (Like the getty-generic one...)
@@ -67,6 +70,10 @@ install_runit_initscripts() {
     # to try to make the CMake do the "right things..."
     mv ${D}/usr/sbin/* ${D}/sbin
     rm -rf ${D}/usr
+
+    # Symlink a few things to one of the binaries that we just moved...
+    ln -s /sbin/halt ${D}/sbin/poweroff
+    ln -s /sbin/halt ${D}/sbin/reboot
 }
 do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', 'install_runit_initscripts', '', d)} "
 
