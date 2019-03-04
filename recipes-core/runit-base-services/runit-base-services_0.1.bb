@@ -65,8 +65,8 @@ install_runit_initscripts() {
     # Put some stuff that was in ${D}/usr/sbin into ${D}/sbin because
     # it's easier to postprocess move them into the right place than
     # to try to make the CMake do the "right things..."
-    mv ${D}/usr/sbin ${D}/sbin
-    rm -f ${D}/usr/sbin
+    mv ${D}/usr/sbin/* ${D}/sbin
+    rm -rf ${D}/usr
 }
 do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', 'install_runit_initscripts', '', d)} "
 
