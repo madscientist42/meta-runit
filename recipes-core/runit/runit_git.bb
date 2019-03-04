@@ -21,7 +21,7 @@ setup_runsvdir() {
     install -d -m 0755 ${D}/etc/sv
     install -d -m 0755 ${D}/etc/runit/runsvdir
     install -d -m 0755 ${D}/etc/runit/runsvdir/default
-    install -d -m 0755 ${D}/etc/runit/runsvdir/once
+    install -d -m 0755 ${D}/etc/runit/runsvdir/single
     ln -s /etc/runit/runsvdir/default ${D}/etc/runit/runsvdir/current
     ln -s /etc/sv ${D}/service
 }

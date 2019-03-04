@@ -44,8 +44,8 @@ inherit runit cmake
 # We want some of the services to be template ones (Like the getty-generic one...)
 # so, we'll be enabling the services selectively here.
 RUNIT-SERVICES = " \
+    sulogin;single \
     "
-
 
 # IF we're set to run with runit in the mix, copy in some new things...
 install_runit_initscripts() {

@@ -65,7 +65,8 @@ do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', '${DO
 enable_default_services() {
 	install -d ${D}${runit-runsvdir}
 	install -d ${D}${runit-runsvdir}/once
-	install -d ${D}${runit-runsvdir}/default   
+	install -d ${D}${runit-runsvdir}/default
+    install -d ${D}${runit-runsvdir}/single
     for svc in ${D}${runit-svcdir}/*; do
         ln -s ${runit-svcdir}/$(basename $svc) ${D}${runit-runsvdir}/default
     done
@@ -74,6 +75,7 @@ enable_default_services() {
 enable_services() {
 	install -d ${D}${runit-runsvdir}
 	install -d ${D}${runit-runsvdir}/once
+	install -d ${D}${runit-runsvdir}/single
 	install -d ${D}${runit-runsvdir}/default   
 
     # Do this off of what's listed...
@@ -83,8 +85,11 @@ enable_services() {
 		option1=`echo $entry | awk -F ";" '{ print $2 }'`
 		option2=`echo $entry | awk -F ";" '{ print $3 }'`
         
+        # Figure out where to put things...  Can be once/single or default...        
         if [ "$option1" = "once" -o "$option2" = "once" ]; then
             linkpath="once"
+        elif [ "$option1" = "single" -o "$option2" = "single" ]; then
+            linkpath="single"
         else
             linkpath="default"
         fi
