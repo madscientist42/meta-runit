@@ -1,6 +1,6 @@
 DESCRIPTION = "Baseline runit services configuration set"
 LICENSE = "MIT"
-LIC_FILES_CHKSUM = "file://COPYING;md5=0835ade698e0bcf8506ecda2f7b4f302"
+LIC_FILES_CHKSUM = "file://COPYING;md5=91cc138cfd680c457be3678a29aaf4a3"
 
 RDEPENDS_${PN} = " \
     millisleep \
@@ -15,6 +15,10 @@ SRC_URI = " \
     file://3 \
     file://functions \
     file://modules-load \
+    file://shutdown \
+    file://halt.c \
+    file://pause.c \
+    file://CMakeLists.txt \
     file://core-services/00-pseudofs.sh \
     file://core-services/01-static-devnodes.sh \
     file://core-services/02-kmods.sh\
@@ -32,12 +36,13 @@ SRC_URI = " \
 
 S = "${WORKDIR}"
 
-inherit runit
+inherit runit cmake
 
 # We want some of the services to be template ones (Like the getty-generic one...)
 # so, we'll be enabling the services selectively here.
 RUNIT-SERVICES = " \
     "
+
 
 # IF we're set to run with runit in the mix, copy in some new things...
 install_runit_initscripts() {
@@ -52,9 +57,16 @@ install_runit_initscripts() {
 	install -m 0755 ${WORKDIR}/3 ${D}/etc/runit
     install -m 0755 ${WORKDIR}/functions ${D}/etc/runit
     install -m 0755 ${WORKDIR}/modules-load ${D}/sbin
+    install -m 0755 ${WORKDIR}/shutdown ${D}/sbin
 	for I in ${WORKDIR}/core-services/* ; do
 		install -m 0755 $I ${D}/etc/runit/core-services
 	done 
+
+    # Put some stuff that was in ${D}/usr/sbin into ${D}/sbin because
+    # it's easier to postprocess move them into the right place than
+    # to try to make the CMake do the "right things..."
+    mv ${D}/usr/sbin ${D}/sbin
+    rm -f ${D}/usr/sbin
 }
 do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', 'install_runit_initscripts', '', d)} "
 
