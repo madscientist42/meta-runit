@@ -1,0 +1,27 @@
+#!/bin/sh
+
+# This is a simple script that dumps status all the services we've
+# got set up for supervision by runit.  We can do "status" or "check"
+# for slightly differing info- and you supply it as the first param
+# or or none.  No params is "status"
+if [ -z "$1" ] ; then 
+    option="status"
+else 
+    option="$1"
+fi
+
+case $option in 
+    status | STATUS | check | CHECK )
+        cd /etc/runit/runsvdir/current
+        for svc in *; do
+            sv $option $svc
+        done
+        ;;
+
+    *) 
+        echo "svstats [ status | check ] :"
+        echo 
+        echo "Dumps the state of the runit supervised services with a 'sv status'"
+        ehco "or 'sv check' call for each depending on which option you choose"
+        ;;
+esac

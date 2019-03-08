@@ -16,6 +16,7 @@ SRC_URI = " \
     file://functions \
     file://modules-load \
     file://shutdown \
+    file://svstats \
     file://halt.c \
     file://pause.c \
     file://CMakeLists.txt \
@@ -61,6 +62,7 @@ install_runit_initscripts() {
     install -m 0755 ${WORKDIR}/functions ${D}/etc/runit
     install -m 0755 ${WORKDIR}/modules-load ${D}/sbin
     install -m 0755 ${WORKDIR}/shutdown ${D}/sbin
+    install -m 0755 ${WORKDIR}/svstats ${D}/sbin
 	for I in ${WORKDIR}/core-services/* ; do
 		install -m 0755 $I ${D}/etc/runit/core-services
 	done 
