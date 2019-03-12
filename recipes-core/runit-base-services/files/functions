@@ -3,7 +3,7 @@
 PATH=/bin:/usr/bin:/sbin:/usr/sbin
 
 msg() {
-    # bold
+    # bold 
     printf "\033[1m=> $@\033[m\n"
 }
 
@@ -62,3 +62,51 @@ deactivate_crypt() {
        deactivate_vgs "Crypt"
    fi
 }
+
+# Wrapper doing a "sv check" so it presents itself in a **MUCH** more useful manner
+#
+# Checks in 100 msec intervals for the list.  If one of the list fails it gathers up
+# a list of the failures and reports within the timeout  Call is as follows:
+#
+# service_deps <timeout> <svcslist>
+# 
+# Where <timeout> is in seconds, svcslist is the list of checks, separated by spaces.
+#
+# (FIXME -- This is more a hack than anything else- and we need to do this better
+#  as part of the compiled bits and bobs so it's MUCH more efficient...  But later)
+#
+service_deps() {
+    # Must slot into the loop...
+    RESULT=1
+    # Count's in 10ths of a second, expressed as seconds timeout
+    COUNT=$(($1 * 10))
+    while [ $RESULT -ne 0 -a $COUNT -ne 0 ]; do
+        RESULT=0
+        SVCS=""
+        for SVC in "$@"; do
+            # Skip our seconds timeout parm...
+            if [ "$SVC" != "$1" ] ; then 
+                # Now, do the check for if something in our list is up or not
+                sv check $SVC 2>&1 > /dev/null
+                if [ $? -ne 0 ] ; then
+                    RESULT=1;
+                    SVCS="$SVCS $SVC"       
+                fi
+            fi
+        done
+        if [ $RESULT -ne 0 ] ; then
+            COUNT=$($COUNT-1)
+            # Sleep 1/10th of a sec...
+            millisleep 100
+        fi
+    done
+    if [ $RESULT -ne 0 ] ; then
+        # The basename() of `pwd` should be our service we care about...
+        SVCNAME=$(basename $(pwd))
+        for SVC in $SVCS; do
+            msg_warn "Service $SVCNAME dependency $SVC down\n"
+        done
+        exit 1
+    fi
+}
+
