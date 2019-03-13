@@ -1,0 +1,3 @@
+#!/bin/sh
+exec wpa_supplicant -Dnl80211 -iwlan0 -c/etc/wpa_supplicant.conf
+
