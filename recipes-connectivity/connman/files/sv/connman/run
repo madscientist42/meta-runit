@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# Check to see if we've got any special rules other than the stuff
+# below for NFS roots to handle and bring them in...
+[ -r ./config ] && . ./config
+
 # Check to see if we're mounted as an NFS root.  (Little different 
 # set of operating rules if we are...)
 set -e
@@ -41,7 +45,7 @@ if [ $nfsroot -eq 1 ]; then
 	fi
     fi
 fi
-exec connmand --nodaemon $EXTRA_PARAM 2>&1
+exec connmand --nodaemon $WIFI_PARAM $EXTRA_PARAM 2>&1
 
 
 
