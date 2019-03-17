@@ -43,7 +43,10 @@ do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', 'inst
 cleanup_sysvinit_dirs() {
     rm -rvf ${D}/etc/rc*.d
     dirlist=`find ${D}/etc/ -type d -name 'init.d' -print`
-    dirlist=`find ${D}/etc -name '*.service' -print`
+    for dir in $dirlist; do
+        rm -rf $dir
+    done
+    dirlist=`find ${D}/etc/ -name '*.service' -print`
     for dir in $dirlist; do
         rm -rf $dir
     done
