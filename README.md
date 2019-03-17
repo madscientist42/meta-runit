@@ -13,3 +13,7 @@ In order to add a package to support this, you need only inherit from runit.bbcl
 
 - If you specify, "DEFAULT" in all caps, in that variable, it will explicitly take each and every sv/<foo> configuration 
 - If you specify the names of the services that you want enabled in a space separated list (where the name is <foo> for sv/foo> ) with or without moderators";log" in the mix sets it up for per-service logging.  Order doesn't matter on the modifiers ) it will enable the specified services to launch at boot.
+
+_**Current State of Affairs**_
+
+We have a decent mix of baseline services working in the layer.  This is now something previewable and usable in it's base form along with mminimal mods with your distribution (pha-linux, etc...) to support using Connman and IWD (or not...we reccomend you contemplate that though...).  You will need to add services for the daemons we haven't gotten done yet.  This layer accepts pull requests for anything services-wise that involves meta/meta-poky.  There will be a metadata layer that requires this one that will provide supports for meta-openembedded.  That will accept pull requests for support recipes for those layers.
