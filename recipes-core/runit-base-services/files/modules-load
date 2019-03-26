@@ -4,16 +4,18 @@
 export PATH=/bin:/usr/bin:/sbin:/usr/sbin
 
 {
-# Parameters passed as modules-load= or rd.modules-load= in kernel command line.
-sed -nr 's/,/\n/;s/(.* |^)(rd\.)?modules-load=([^ ]*).*/\3/p' /proc/cmdline
+    # Parameters passed as modules-load= or rd.modules-load= in kernel command line.
+    sed -nr 's/,/\n/;s/(.* |^)(rd\.)?modules-load=([^ ]*).*/\3/p' /proc/cmdline
 
-# Find files /{etc,run,usr/lib}/modules-load.d/*.conf in that order.
-find -L /etc/modules-load.d /run/modules-load.d /usr/lib/modules-load.d \
-       	-maxdepth 1 -name '*.conf' -printf '%p %P\n' 2>/dev/null |
-# Load each basename only once.
-	sort -k2 -s | uniq -f1 | cut -d' ' -f1 |
-# Read the files, output all non-empty, non-comment lines.
-	tr '\012' '\0' | xargs -0 -r grep -h -v -e '^[#;]' -e '^$'
+    # Find files /{etc,run,usr/lib}/modules-load.d/*.conf in that order.
+    for configdir in "/etc/modules-load.d /run/modules-load.d /usr/lib/modules-load.d"; do
+        # Look for .conf files in the desired paths...
+        find -L $configdir -maxdepth 1 -name '*.conf' -print 2>/dev/null | 
+        # Load each basename only once.
+	    sort -k2 -s | uniq -f1 | cut -d' ' -f1 |
+        # Read the files, output all non-empty, non-comment lines.
+	    tr '\012' '\0' | xargs -r grep -h -v -e '^[#;]' -e '^$'        
+    done
 } |
 # Call modprobe on the list of modules
-tr '\012' '\0' | xargs -0 -r modprobe -ab "$@"
+tr '\012' '\0' | xargs -r modprobe -ab "$@"
