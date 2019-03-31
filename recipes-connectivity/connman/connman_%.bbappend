@@ -20,6 +20,6 @@ RUNIT-SERVICES = "DEFAULT"
 copy_connman_config(){
     install -m 0644 ${WORKDIR}/${WIFI_MANAGER}.config ${D}${sysconfdir}/sv/connman/config
 }
-do_install[postfuncs] += "copy_connman_config "
+do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', 'copy_connman_config', '', d)} "
 
 
