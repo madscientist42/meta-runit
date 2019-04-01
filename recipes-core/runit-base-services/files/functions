@@ -84,10 +84,11 @@ service_deps() {
         RESULT=0
         SVCS=""
         for SVC in "$@"; do
-            # Skip our seconds timeout parm...
+            # Use a zero seconds timeout.  This way we don't wait, come through
+            # and timeout if we are not up on a check script, etc.
             if [ "$SVC" != "$1" ] ; then 
                 # Now, do the check for if something in our list is up or not
-                sv check $SVC 2>&1 > /dev/null
+                sv -w0 check $SVC 2>&1 > /dev/null
                 if [ $? -ne 0 ] ; then
                     RESULT=1;
                     SVCS="$SVCS $SVC"       
