@@ -33,6 +33,9 @@ SRC_URI = " \
     file://sv/getty-generic/run \
     file://sv/getty-generic/finish \
     file://sv/sulogin/run \
+    file://syslog-helper \
+    file://sv/syslog/run \
+    file://sv/klog/run \
     "
 
 S = "${WORKDIR}"
@@ -46,6 +49,8 @@ inherit runit cmake
 # so, we'll be enabling the services selectively here.
 RUNIT-SERVICES = " \
     sulogin;single \
+    syslog \
+    klog \
     "
 
 # IF we're set to run with runit in the mix, copy in some new things...
@@ -60,6 +65,7 @@ install_runit_initscripts() {
 	install -m 0755 ${WORKDIR}/2 ${D}/etc/runit
 	install -m 0755 ${WORKDIR}/3 ${D}/etc/runit
     install -m 0755 ${WORKDIR}/functions ${D}/etc/runit
+    install -m 0755 ${WORKDIR}/syslog-helper ${D}/etc/runit
     install -m 0755 ${WORKDIR}/modules-load ${D}/sbin
     install -m 0755 ${WORKDIR}/shutdown ${D}/sbin
     install -m 0755 ${WORKDIR}/svstats ${D}/sbin

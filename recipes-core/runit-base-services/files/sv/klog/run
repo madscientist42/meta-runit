@@ -1,0 +1,5 @@
+#!/bin/sh
+
+. /etc/runit/syslog-helper
+
+exec klogd -a /sbin/klogd -- -n 2>&1

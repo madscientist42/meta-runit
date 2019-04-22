@@ -1,0 +1,12 @@
+#!/bin/sh
+
+OPTIONS=""
+if [ -f /etc/default/rpcbind ]
+then
+    . /etc/default/rpcbind
+elif [ -f /etc/rpcbind.conf ]
+then
+    . /etc/rpcbind.conf
+fi
+
+exec /usr/sbin/rpcbind $OPTIONS 2>&1

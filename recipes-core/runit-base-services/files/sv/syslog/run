@@ -1,0 +1,6 @@
+#!/bin/sh
+
+. /etc/runit/syslog-helper
+
+exec syslogd -a /sbin/syslogd -- -n $SYSLOG_ARGS 2>&1
+
