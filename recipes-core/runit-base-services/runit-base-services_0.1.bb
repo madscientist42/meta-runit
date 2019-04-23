@@ -25,6 +25,7 @@ SRC_URI = " \
     file://core-services/02-kmods.sh\
     file://core-services/03-console-setup.sh \
     file://core-services/03-filesystems.sh \
+    file://core-services/03-postinsts.sh \
     file://core-services/03-udev.sh \
     file://core-services/04-swap.sh \
     file://core-services/05-misc.sh \
