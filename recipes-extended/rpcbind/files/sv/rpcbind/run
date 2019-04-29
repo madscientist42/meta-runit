@@ -9,4 +9,4 @@ then
     . /etc/rpcbind.conf
 fi
 
-exec /usr/sbin/rpcbind $OPTIONS 2>&1
+exec /usr/sbin/rpcbind -d $OPTIONS 2>&1
