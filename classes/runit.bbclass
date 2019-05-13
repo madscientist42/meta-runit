@@ -66,9 +66,8 @@ do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', '${DO
 # "log" to enable service specific logging from the redirected output of the
 # daemon binary, with the options being separated by semicolons.
 enable_default_services() {
-	install -d ${D}${runit-runsvdir}
-	install -d ${D}${runit-runsvdir}/once
-	install -d ${D}${runit-runsvdir}/default
+    install -d ${D}${runit-runsvdir}
+    install -d ${D}${runit-runsvdir}/default
     install -d ${D}${runit-runsvdir}/single
     for svc in ${D}${runit-svcdir}/*; do
         ln -s ${runit-svcdir}/$(basename $svc) ${D}${runit-runsvdir}/default
@@ -76,39 +75,44 @@ enable_default_services() {
 }
 
 enable_services() {
-	install -d ${D}${runit-runsvdir}
-	install -d ${D}${runit-runsvdir}/once
-	install -d ${D}${runit-runsvdir}/single
-	install -d ${D}${runit-runsvdir}/default   
+    install -d ${D}${runit-runsvdir}
+    install -d ${D}${runit-runsvdir}/single
+    install -d ${D}${runit-runsvdir}/default   
 
     # Do this off of what's listed...
     tmp="${RUNIT-SERVICES}"
-	for entry in $tmp; do
-		svc=`echo $entry | awk -F ";" '{ print $1 }'`
-		option1=`echo $entry | awk -F ";" '{ print $2 }'`
-		option2=`echo $entry | awk -F ";" '{ print $3 }'`
-        
-        # Figure out where to put things...  Can be once/single or default...        
-        if [ "$option1" = "once" -o "$option2" = "once" ]; then
-            linkpath="once"
-        elif [ "$option1" = "single" -o "$option2" = "single" ]; then
-            linkpath="single"
-        else
-            linkpath="default"
-        fi
-        ln -s ${runit-svcdir}/$svc ${D}${runit-runsvdir}/$linkpath  
-        if [ "$option1" = "log" -o "$option2" = "log" ]; then
-            # User has specified simple logging support for the service 
-            # (Which, technically, can be done out of the sv dir, but
-            #  this lets a user specify it even simpler than that way...)
-            logsv="${D}${runit-svcdir}/$svc/log"
-            mkdir -p $logsv
-            logsv="$logsv/run"
-            echo "#!/bin/sh" > $logsv
-            echo "exec chpst -ulog svlogd -tt $svc" >> $logsv
-            chmod a+x $logsv
-        fi      
-	done
+    for entry in $tmp; do
+
+        # First field is always the service, followed by up to three optional values
+        svc=`echo $entry | awk -F ";" '{ print $1 }'`
+        options=`echo $entry | awk -F ";" '{ print $2 " " $3 }'`
+
+        # Figure out where to put things...  Can be single or default, enable simple logging
+        # or specify an order prefix for the runsvdir entry...  You can specify a service
+        # to be in either runlevel or both (Two entries... Unlikely, but we're leaving it
+        # open for people...)
+        linkpath="default"
+        for option in $options ; do
+            case $option in
+                single | default )
+                    linkpath="$option"
+                    ;;
+
+                log ) 
+                    # User has specified simple logging support for the service 
+                    # (Which, technically, can be done out of the sv dir, but
+                    #  this lets a user specify it even simpler than that way...)
+                    logsv="${D}${runit-svcdir}/$svc/log"
+                    mkdir -p $logsv
+                    logsv="$logsv/run"
+                    echo "#!/bin/sh" > $logsv
+                    echo "exec chpst -ulog svlogd -tt $svc" >> $logsv
+                    chmod a+x $logsv
+                    ;;
+            esac    
+        done
+        ln -s ${runit-svcdir}/$svc ${D}${runit-runsvdir}/$linkpath/$order$svc
+    done
 }
 DO_DEFAULT_SVCS = "${@bb.utils.contains('RUNIT-SERVICES', 'DEFAULT', 'enable_default_services', 'enable_services', d)}"
 do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', '${DO_DEFAULT_SVCS}', '', d)} "
