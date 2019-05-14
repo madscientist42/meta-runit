@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# Set the wallclock off of the RTC on the system, if any...
+. /etc/runit/core-services/00-hwclock.sh
+
+# Pause so it leaves it ready to trigger on exit...
+exec pause
+

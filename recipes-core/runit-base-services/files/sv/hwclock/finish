@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# If the "daemon" that set the clock exits, save off the system clock
+# to the HW one...
+[ ! -x /sbin/hwclock ] && exit 0
+
+. /etc/runit/functions
+
+[ -f /etc/default/hwclock ] && . /etc/default/hwclock
+
+if [ "$HWCLOCKACCESS" != no ] ; then
+	if [ "$VERBOSE" != no ] ; then
+		msg "Saving the System Clock time to the Hardware Clock..."
+	fi
+	hwclock $tz --systohc
+	if [ "$VERBOSE" != no ] ; then
+		msg "Hardware Clock updated to `date`."
+	fi
+fi
+

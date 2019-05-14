@@ -20,6 +20,7 @@ SRC_URI = " \
     file://halt.c \
     file://pause.c \
     file://CMakeLists.txt \
+    file://core-services/00-hwclock.sh \
     file://core-services/00-pseudofs.sh \
     file://core-services/01-static-devnodes.sh \
     file://core-services/02-kmods.sh\
@@ -31,6 +32,8 @@ SRC_URI = " \
     file://core-services/05-populate-volatile.sh \
     file://core-services/06-postinsts.sh \
     file://core-services/06-sysctl.sh \
+    file://sv/hwclock/run \
+    file://sv/hwclock/finish \
     file://sv/getty-generic/run \
     file://sv/getty-generic/finish \
     file://sv/sulogin/run \
@@ -51,6 +54,7 @@ RUNIT-SERVICES = " \
     sulogin;single \
     syslog \
     klog \
+    hwclock \
     "
 
 # IF we're set to run with runit in the mix, copy in some new things...
