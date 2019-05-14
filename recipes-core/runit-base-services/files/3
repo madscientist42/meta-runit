@@ -3,6 +3,8 @@
 
 . /etc/runit/functions
 
+SVCS_RUN_DIR="/var/run/runit/runsvdir/current"
+
 detect_virt
 [ -r /etc/rc.conf ] && . /etc/rc.conf
 
@@ -12,8 +14,8 @@ fi
 
 echo
 msg "Waiting for services to stop..."
-sv force-stop /var/service/*
-sv exit /var/service/*
+sv exit $SVCS_RUN_DIR
+sv force-stop $SVCS_RUN_DIR/*
 
 [ -x /etc/rc.shutdown ] && /etc/rc.shutdown
 
