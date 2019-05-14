@@ -4,7 +4,6 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 # Add the services set(s)...
 SRC_URI += " \
     file://sv/bluetooth/run \
-    file://sv/obex/run \
     "
 
 # Next, make it a runit capable package...
@@ -25,10 +24,5 @@ RUNIT_BT_REMOVES = " \
 FILES_${PN}_append = "${@bb.utils.contains('DISTRO_FEATURES', 'runit', '${RUNIT_BT_SVCS}', '', d)}"
 FILES_${PN}_remove = "${@bb.utils.contains('DISTRO_FEATURES', 'runit', '${RUNIT_BT_REMOVES}', '', d)}"
 
-RUNIT_OBEX_SVCS = " \
-    ${runit-svcdir}/obex/run \
-    ${runit-runsvdir}/obex \
-    "
-FILES_${PN}-obex_append = "${@bb.utils.contains('DISTRO_FEATURES', 'runit', '${RUNIT_OBEX_SVCS}', '', d)}"
     
     
