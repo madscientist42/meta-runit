@@ -6,6 +6,8 @@
 # mount failures or if we just warn...
 [ -e /etc/default/mount ] && . /etc/default/mount 
 
+. /etc/runit/functions
+
 msg "Remounting rootfs read-only..."
 mount -o remount,ro / || emergency_shell
 
