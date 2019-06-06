@@ -25,6 +25,7 @@ SRC_URI = " \
     file://core-services/01-static-devnodes.sh \
     file://core-services/02-kmods.sh\
     file://core-services/03-console-setup.sh \
+    file://core-services/03-dtbo-load.sh \
     file://core-services/03-filesystems.sh \
     file://core-services/03-udev.sh \
     file://core-services/04-swap.sh \
