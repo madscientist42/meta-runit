@@ -1,7 +1,7 @@
 # meta-runit
 Provide init services ultimately using either busybox's runit variant or the full-on one.
 
-Currently, the layer, in it's current state of affairs, is using madscientist42's runit fork (Current maintained, using CMake for build and packaging).  Future iterations will use either version depending on needs.  Current source is intended to be used with Sumo.  No promises (yet) on any of the follow-on or prior layer versions.  It is very much an early release of metadata- if it breaks, you get _**ALL**_ of the pieces; all other warranties, implied or expressed are inoperative.  That being said, for what little has been bolted in/on to this as .bbappends to do this more the "right" way than past attempts at this to showcase what runit brings to the table, it seems to work _**WELL**_. _**(REALLY WELL...)**_
+Currently, the layer, in it's current state of affairs, is using madscientist42's runit fork (Current maintained, using CMake for build and packaging).  Future iterations will use either version depending on needs.  Current source is intended to be used with Sumo.  No promises (yet) on any of the follow-on or prior layer versions.  It is very much an early release of metadata- if it breaks, you get _**ALL**_ of the pieces; all other warranties, implied or expressed are inoperative.  That being said, for what little has been bolted in/on to this as .bbappends to do this more the "right" way than past attempts at this to showcase what runit brings to the table, it seems to work _**WELL**_. _**(REALLY WELL...  There is one embedded distribution aggressively leveraging this layer in their product dev, with another about to finalize their move to it, with possibly others.)**_
 
 _**How to use: (Currently)**_
 
