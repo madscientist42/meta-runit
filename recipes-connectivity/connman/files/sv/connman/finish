@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# Handle shutdowns...the daemons connman launches are subject to
+# dismissal at the time we get ran.
+killall -9 wpa_supplicant > /dev/null
+killall -9 ofonod > /dev/null

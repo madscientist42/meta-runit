@@ -6,6 +6,7 @@ WIFI_MANAGER = "${@bb.utils.contains('DISTRO_FEATURES', 'iwd', 'iwd', 'wpa-suppl
 # Add the services set(s)...
 SRC_URI += " \
     file://sv/connman/run \
+    file://sv/connman/finish \
     file://${WIFI_MANAGER}.config \
     "
 
