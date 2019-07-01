@@ -8,8 +8,13 @@
 # things like wpa_supplicant, ofono, etc., so we don't want runit 
 # services files for the others right now.  They cause weird problems
 # with scans, etc.
-[ -e /etc/runit/runsvdir/default/wpa_supplicant ] && rm -f /etc/runit/runsvdir/default/wpa_supplicant
-[ -e /etc/runit/runsvdir/default/ofono ] && rm -f /etc/runit/runsvdir/default/ofono
+SVC_LIST="wpa_supplicant hostapd ofono"
+for SVC in $SVC_LIST; do
+    sv stop $SVC
+    if [ ! -e /etc/sv/$SVC/down ]; then
+        touch /etc/sv/$SVC/down
+    fi
+done
 
 # Check to see if we're mounted as an NFS root.  (Little different 
 # set of operating rules if we are...)

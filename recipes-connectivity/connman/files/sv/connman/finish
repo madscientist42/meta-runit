@@ -2,5 +2,8 @@
 
 # Handle shutdowns...the daemons connman launches are subject to
 # dismissal at the time we get ran.
-killall -9 wpa_supplicant > /dev/null
-killall -9 ofonod > /dev/null
+SVC_LIST="wpa_supplicant hostapd ofonod"
+for SVC in $SVC_LIST; do
+    killall -9 $SVC > /dev/null
+done
+
