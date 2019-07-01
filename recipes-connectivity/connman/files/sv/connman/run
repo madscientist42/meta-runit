@@ -10,7 +10,8 @@
 # with scans, etc.
 SVC_LIST="wpa_supplicant hostapd ofono"
 for SVC in $SVC_LIST; do
-    sv stop $SVC
+    sv exit $SVC
+    sv force-stop $SVC
     if [ ! -e /etc/sv/$SVC/down ]; then
         touch /etc/sv/$SVC/down
     fi
