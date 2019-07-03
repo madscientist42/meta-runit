@@ -1,2 +1,3 @@
 #!/bin/sh
+sv start syslog || exit 1
 exec /sbin/klogd -n 2>&1
