@@ -109,6 +109,10 @@ enable_services() {
                     echo "exec chpst -ulog svlogd -tt $svc" >> $logsv
                     chmod a+x $logsv
                     ;;
+
+                down | once )
+                    touch ${D}${runit-svcdir}/$svc/$option
+                    ;;
             esac    
         done
         ln -s ${runit-svcdir}/$svc ${D}${runit-runsvdir}/$linkpath/$order$svc
