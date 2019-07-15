@@ -28,6 +28,7 @@ install_runit_services() {
         mkdir -p ${D}${runit-svcdir}
 
         cp -rap --no-preserve=ownership ${WORKDIR}/sv/* ${D}${runit-svcdir}
+        chmod u+x ${D}${runit-svcdir}/*/run
     fi
 }
 do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', 'install_runit_services', '', d)} "

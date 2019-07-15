@@ -2,7 +2,20 @@
 
 # Check to see if we've got any special rules other than the stuff
 # below for NFS roots to handle and bring them in...
-[ -r ./config ] && . ./config
+[ -r /etc/default/config ] && . /etc/default/config
+
+# Handle a few potential problems with this runlevel.  connman controls
+# things like wpa_supplicant, ofono, etc., so we don't want runit 
+# services files for the others right now.  They cause weird problems
+# with scans, etc.
+SVC_LIST="wpa_supplicant hostapd ofono"
+for SVC in $SVC_LIST; do
+    sv exit $SVC
+    sv force-stop $SVC
+    if [ ! -e /etc/sv/$SVC/down ]; then
+        touch /etc/sv/$SVC/down
+    fi
+done
 
 # Check to see if we're mounted as an NFS root.  (Little different 
 # set of operating rules if we are...)
