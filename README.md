@@ -16,6 +16,8 @@ In order to add a package to support this, you need only inherit from runit.bbcl
 
 Currently supported modifiers:
 
+- "single" - Enable service for Single-user mode (Can only be one of "single" or "default")
+- "default" - Enable service for Multi-user/processing mode (Can only be one of "single" or "default")
 - "log" - Enable basic default svlogd logging support for the service.
 - "once" - Set the service to start but be allowed to exit without any further supervision.
 - "down" - Set the service available for supervision, but down at startup.
