@@ -11,8 +11,8 @@ Once there, you need only add "runit" to your DISTRO_FEATURES to turn on runit i
 
 In order to add a package to support this, you need only inherit from runit.bbclass and have the services setup (i.e. /etc/sv/\<foo\>/run script at minimum) in your SRC_URI set and it will package it accordingly for you and enable it based on rules set in the RUNIT_SERVICES variable in your package declarations as follows:
 
-- If you specify, "DEFAULT" in all caps, in that variable, it will explicitly take each and every sv/<foo> configuration 
-- If you specify the names of the services that you want enabled in a space separated list (where the name is \<foo\> for sv/\<foo\> ) with or without modifiers.  Order doesn't matter on the modifiers as it will apply the modifiers accordingly on boot. 
+- If you specify, "DEFAULT" in all caps, in that variable, it will explicitly provision each and every sv/<foo> configuration, applying the "default" modifier to each in turn.
+- If you specify the names of the services that you want enabled in a space separated list (where the name is \<foo\> for sv/\<foo\> ) with or without modifiers.  Order doesn't matter on the modifiers as it will apply the modifiers accordingly on boot. This will provision this service with the specified modifiers. (e.g. "syslog;log" would set the syslog service with a default logging service to be provided for the same, ran at the default runlevel.)
 
 Currently supported modifiers:
 
