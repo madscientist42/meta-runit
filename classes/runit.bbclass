@@ -107,7 +107,9 @@ enable_services() {
                     mkdir -p $logsv
                     logsv="$logsv/run"
                     echo "#!/bin/sh" > $logsv
-                    echo "exec chpst -ulog svlogd -tt $svc" >> $logsv
+                    echo "[ -e /etc/default/logging ] && source /etc/default/logging" >> $logsv 
+                    echo "[ -z \"\$BASE_LOGGING_DIR\" ] && BASE_LOGGING_DIR=\"/var/log\"" >> $logsv 
+                    echo "exec chpst -ulog svlogd -tt \$BASE_LOGGNG_DIR/$svc" >> $logsv
                     chmod a+x $logsv
                     ;;
 
