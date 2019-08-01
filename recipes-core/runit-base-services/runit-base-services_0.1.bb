@@ -99,6 +99,7 @@ install_serial_consoles() {
     # Handle the OLD single case- if we don't have the SERIAL_CONSOLES entry defined and have SERIAL CONSOLE
     # defined instead, pour it into the other with the expected formatting...
     if [ -z "${SERIAL_CONSOLES}" ] ; then
+        echo Handling old method...
         export SERIAL_CONSOLES=`echo "${SERIAL_CONSOLE}" | sed 's/ /\;/g'` 
     fi 
 
