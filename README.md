@@ -19,6 +19,7 @@ Currently supported modifiers:
 - "single" - Enable service for Single-user mode (Can only be one of "single" or "default")
 - "default" - Enable service for Multi-user/processing mode, presumed without specifying this (Can only be one of "single" or "default")
 - "log" - Enable basic default svlogd logging support for the service. (Logging presumes there is a "log" user!)
+- "log-no-ts" - Enable basic default svlogd logging without timestamps.
 - "once" - Set the service to start but be allowed to exit without any further supervision.
 - "down" - Set the service available for supervision, but down at startup.
 
