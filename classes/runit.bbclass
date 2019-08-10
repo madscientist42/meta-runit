@@ -99,10 +99,11 @@ enable_services() {
                     linkpath="$option"
                     ;;
 
-                log ) 
+                log | log-no-ts ) 
                     # User has specified simple logging support for the service 
                     # (Which, technically, can be done out of the sv dir, but
                     #  this lets a user specify it even simpler than that way...)
+                    timestamping=""
                     logsv="${D}${runit-svcdir}/$svc/log"
                     mkdir -p $logsv
                     logsv="$logsv/run"
@@ -110,7 +111,8 @@ enable_services() {
                     echo "[ -e /etc/default/logging ] && source /etc/default/logging" >> $logsv 
                     echo "[ -z \"\$BASE_LOGGING_DIR\" ] && BASE_LOGGING_DIR=\"/var/log\"" >> $logsv 
                     echo "[ -e \$BASE_LOGGNG_DIR/\$svc ] && mkdir \$BASE_LOGGING_DIR/\$svc" >> $logsv
-                    echo "exec chpst -ulog svlogd -tt \$BASE_LOGGNG_DIR/\$svc" >> $logsv
+                    [ "$option" == "log-no-ts" ] && timestamping="-tt"
+                    echo "exec chpst -ulog svlogd $timestamping \$BASE_LOGGNG_DIR/\$svc" >> $logsv
                     chmod a+x $logsv
                     ;;
 
