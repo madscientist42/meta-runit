@@ -110,9 +110,12 @@ enable_services() {
                     echo "#!/bin/sh" > $logsv
                     echo "[ -e /etc/default/logging ] && source /etc/default/logging" >> $logsv 
                     echo "[ -z \"\$BASE_LOGGING_DIR\" ] && BASE_LOGGING_DIR=\"/var/log\"" >> $logsv 
-                    echo "[ -e \$BASE_LOGGING_DIR/\$svc ] && mkdir \$BASE_LOGGING_DIR/\$svc" >> $logsv
+                    echo "if [ -e \$BASE_LOGGING_DIR/$svc ] ; then" >> $logsv
+                    echo "     mkdir -p \$BASE_LOGGING_DIR/$svc"  >> $logsv
+                    echo "     chown -R log:log \$BASE_LOGGING_DIR/$svc" >> $logsv
+                    echo "fi" >> $logsv
                     [ "$option" == "log-no-ts" ] && timestamping="-tt"
-                    echo "exec chpst -ulog svlogd $timestamping \$BASE_LOGGNG_DIR/\$svc" >> $logsv
+                    echo "exec chpst -ulog svlogd $timestamping \$BASE_LOGGNG_DIR/$svc" >> $logsv
                     chmod a+x $logsv
                     ;;
 
