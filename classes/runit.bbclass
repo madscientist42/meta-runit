@@ -115,7 +115,7 @@ enable_services() {
                     echo "     chown -R log:log \$BASE_LOGGING_DIR/$svc" >> $logsv
                     echo "fi" >> $logsv
                     [ "$option" == "log-no-ts" ] && timestamping="-tt"
-                    echo "exec chpst -ulog svlogd $timestamping \$BASE_LOGGNG_DIR/$svc" >> $logsv
+                    echo "exec chpst -ulog svlogd $timestamping \$BASE_LOGGING_DIR/$svc" >> $logsv
                     chmod a+x $logsv
                     ;;
 
