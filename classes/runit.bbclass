@@ -110,7 +110,7 @@ enable_services() {
                     echo "#!/bin/sh" > $logsv
                     echo "[ -e /etc/default/logging ] && source /etc/default/logging" >> $logsv 
                     echo "[ -z \"\$BASE_LOGGING_DIR\" ] && BASE_LOGGING_DIR=\"/var/log\"" >> $logsv 
-                    echo "if [ -e \$BASE_LOGGING_DIR/$svc ] ; then" >> $logsv
+                    echo "if [ ! -e \$BASE_LOGGING_DIR/$svc ] ; then" >> $logsv
                     echo "     mkdir -p \$BASE_LOGGING_DIR/$svc"  >> $logsv
                     echo "     chown -R log:log \$BASE_LOGGING_DIR/$svc" >> $logsv
                     echo "fi" >> $logsv
