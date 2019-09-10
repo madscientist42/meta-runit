@@ -7,7 +7,7 @@ SRC_URI = " \
 	git://github.com/madscientist42/runit.git;protocol=https \
 	"
 
-SRCREV = "8ccb4f94b0bde2ada1ee9dd940fd8f166ccc8eef"
+SRCREV = "17d63c7068cc6e6ee0c0abde9457ab3417d7e0d2"
 
 S = "${WORKDIR}/git"
 
