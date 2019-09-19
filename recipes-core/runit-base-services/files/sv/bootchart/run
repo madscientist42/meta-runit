@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# Check to see if we even HAVE bootchart as a loaded item or not.
+which bootchartd
+if [ $? -eq 0 ] ; then
+    # Got it.  Process this if we see the collector running...
+    pidof bootchart-collector
+    if [ $? -eq 0 ] ; then
+        # Up and running.  Stage up the capture shutdown.
+        #
+        # FIXME : For now, we'll wait <X> seconds...
+        #
+        # (Ideally, we'd have a time at which stopping counted, but for now..)
+        sleep 15
+        bootchartd stop
+    fi
+fi
+
+# Regardless of presence or not, we're a one-shot.
+sv stop bootchart
