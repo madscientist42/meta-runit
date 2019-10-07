@@ -165,7 +165,7 @@ enable_services() {
                     fi
                     # Config, if it exists in the /etc/defaults dir, is global unless overridden by the recipe
                     [ ! -e ${D}${runit-svcdir}/$svc/log/config ] && ln -s /etc/default/svlogd.conf ${D}${runit-svcdir}/$svc/log/config
-
+                    ;;
 
                 down | once )
                     touch ${D}${runit-svcdir}/$svc/$option
