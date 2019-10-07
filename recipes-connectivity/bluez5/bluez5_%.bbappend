@@ -11,6 +11,7 @@ inherit runit
 
 # And declare it to be auto-enabled as default...
 RUNIT-SERVICES = "DEFAULT"
+RUNIT_DEFAULT_MODS = "log"
 
 # Follow this up by updating packaging accordingly...
 RUNIT_BT_SVCS = " \

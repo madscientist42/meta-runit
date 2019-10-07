@@ -17,4 +17,6 @@ inherit runit
 
 # And declare it to be auto-enabled as default...
 RUNIT-SERVICES = "DEFAULT"
+RUNIT_DEFAULT_MODS = "log"
+
 

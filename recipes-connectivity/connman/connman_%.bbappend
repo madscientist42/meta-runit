@@ -15,6 +15,7 @@ inherit runit
 
 # And declare it to be auto-enabled as default...
 RUNIT-SERVICES = "DEFAULT"
+RUNIT_DEFAULT_MODS = "log"
 
 # One last thing, set up the gear-shifted config file so we can use 
 # the right and desired wireless, etc. manager entries for our daemon...
