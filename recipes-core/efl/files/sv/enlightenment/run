@@ -1,0 +1,2 @@
+#!/bin/sh
+exec entrance 2>&1 
