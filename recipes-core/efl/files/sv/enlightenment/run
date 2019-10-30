@@ -1,2 +1,2 @@
 #!/bin/sh
-exec entrance 2>&1 
+exec entrance -n 2>&1 
