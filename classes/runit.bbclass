@@ -100,7 +100,7 @@ enable_default_services() {
                         echo "     mkdir -p \$BASE_LOGGING_DIR/$svc"  >> $logsv
                         echo "     chown -R log:log \$BASE_LOGGING_DIR/$svc" >> $logsv
                         echo "fi" >> $logsv
-                        [ "$option" = "log-no-ts" ] && timestamping="-tt"
+                        [ "$option" = "log" ] && timestamping="-tt"
                         echo "exec chpst -ulog svlogd $timestamping \$BASE_LOGGING_DIR/$svc" >> $logsv
                         chmod a+x $logsv
                     fi
