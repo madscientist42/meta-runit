@@ -53,7 +53,9 @@ def generate_services_entry(d, svc_group, prior, svcs_list):
     print("sv 1 $SVCS_LIST", file=finishfile)
     print("pause 2", file=finishfile)
     print("sv stop $SVCS_LIST", file=finishfile)
-    finishfile.close()
+    finishfile.close()    
+    # Now symlink the whole there to let runit know about it all.
+    os.symlink(d.expand("${runit-svcdir}/") + packagename + "-" + str(svc_group), d.expand("${D}${runit-runsvdir}/default/") + packagename + "-" + str(svc_group))
 
 
 # For the specified grouping(s), generate a launcher that turns on those specified
@@ -81,8 +83,16 @@ python process_service_group_entries() {
             if (svcs_list) :
                 # Generate our content for the packaging...
                 generate_services_entry(d, svc, prior, svcs_list)
-                # Remove the specified entries from the defaults list.
+                # Handle special processing for each item in this list...
                 for sv in list(svcs_list.split(" ")):
+                    # Generate a down entry for the case that we don't already
+                    # have one processed by any default runit.bbclass processing.
+                    # (This lets us do crazy things like specifying services groups
+                    #  blindly so you don't even need services entries in the recipe
+                    #  that you're specifying the grouping launcher...)
+                    open(d.expand("${D}${runit-svcdir}/") + sv + "/down", 'a').close
+                    
+                    # Remove the defaults entry, if any for this service...
                     if default_svc_grp.count(sv) > 0:
                         default_svc_grp.remove(sv)
             prior = svc
@@ -99,4 +109,6 @@ python process_service_group_entries() {
             generate_services_entry(d, 999, svc, default_svcs)
 }
 do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', 'process_service_group_entries', '', d)} "
+
+
 
