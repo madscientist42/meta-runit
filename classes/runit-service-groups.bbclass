@@ -90,7 +90,9 @@ python process_service_group_entries() {
                     # (This lets us do crazy things like specifying services groups
                     #  blindly so you don't even need services entries in the recipe
                     #  that you're specifying the grouping launcher...)
-                    open(d.expand("${D}${runit-svcdir}/") + sv + "/down", 'a').close
+                    svcpath = d.expand("${D}${runit-svcdir}/") + sv
+                    os.system("mkdir -p " + svcpath)
+                    os.system("touch " + svcpath + "/down")
                     
                     # Remove the defaults entry, if any for this service...
                     if default_svc_grp.count(sv) > 0:
