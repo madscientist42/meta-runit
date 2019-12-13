@@ -14,6 +14,8 @@ def preprocess_default_svcs(d):
 
 
 def generate_services_entry(d, svc_group, prior, svcs_list):
+    import stat 
+
     # Just generate a run/finish/config/check that leverages this list when we have
     # a list.  We need to build a list of the stuff for a similar run through
     # the lists where we default everything NOT on a list prior to the emptys
@@ -36,11 +38,15 @@ def generate_services_entry(d, svc_group, prior, svcs_list):
     print("sv -w0 start $SVCS_LIST", file=runfile)
     print("exec pause", file=runfile)
     runfile.close()
+    # Make sure the run is executable...
+    os.chmod(filepath + "/run", stat.S_IRWXU | stat.S_IRGRP)
     checkfile = open(filepath + "/check", "wt")
     print("#!/bin/sh", file=checkfile)
     print(". ./svcs-list", file=checkfile)
-    print("sv -w0 check $SVCS_LIST 2>&1 > /dev/null", file=checkfile)
+    print("sv -w0 check $SVCS_LIST > /dev/null", file=checkfile)
     checkfile.close()
+    # Make sure the check is executable...
+    os.chmod(filepath + "/check", stat.S_IRWXU | stat.S_IRGRP )
     # Handle closing down services semi-gracefully.  We issue a SIGUSR1 to 
     # services needing to be told that they're being shut down (Some cases
     # of some services need to wind down over a bit longer time than is 
@@ -54,6 +60,8 @@ def generate_services_entry(d, svc_group, prior, svcs_list):
     print("pause 2", file=finishfile)
     print("sv stop $SVCS_LIST", file=finishfile)
     finishfile.close()    
+    # Make sure the finish is executable...
+    os.chmod(filepath + "/finish", stat.S_IRWXU | stat.S_IRGRP)
     # Now symlink the whole there to let runit know about it all.
     os.symlink(d.expand("${runit-svcdir}/") + packagename + "-" + str(svc_group), d.expand("${D}${runit-runsvdir}/default/") + packagename + "-" + str(svc_group))
 
