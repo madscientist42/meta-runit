@@ -87,6 +87,10 @@ python process_service_group_entries() {
 
         # Now, generate our defined scripting for the services groups.
         svc_groups = int(num_groups)
+        # Clamp the service groups number to our maximum.  Any larger is
+        # "ignored"...
+        if svc_groups > 998 :
+            svc_groups = 998
         prior = 0
         for svc in range(1, svc_groups + 1) :
             svcs_list = d.getVar("SVC_GROUP_" + str(svc), expand=True)
