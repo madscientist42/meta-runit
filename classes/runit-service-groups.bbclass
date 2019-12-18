@@ -77,7 +77,7 @@ python process_service_group_entries() {
 
     # Check to see if we even have groupings declared...
     num_groups = d.getVar("NUM_SVC_GROUPS")
-    if num_groups != "":
+    if (num_groups != None) and (num_groups != ""):
         # Handle the defaults pre-staging...
         preprocess_default_svcs(d)
         default_svc_grp = list(d.getVar("DEFAULT_SVC_GROUP").split(" "))
