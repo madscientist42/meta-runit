@@ -73,6 +73,8 @@ def generate_services_entry(d, svc_group, prior, svcs_list):
 # THIS recipe as a final installed is the empty groups' list where this is 0 or more 
 # groups as specified..
 python process_service_group_entries() {
+    import re 
+
     # Check to see if we even have groupings declared...
     num_groups = d.getVar("NUM_SVC_GROUPS")
     if num_groups != "":
@@ -89,6 +91,12 @@ python process_service_group_entries() {
         for svc in range(1, svc_groups + 1) :
             svcs_list = d.getVar("SVC_GROUP_" + str(svc), expand=True)
             if (svcs_list) :
+                # Strip out problematic whitespacing...   Tab reduction first...
+                svcs_list = re.sub("\t+", " ", svcs_list)
+                # Followed by multiple spaces- we only want ONE per field as a separator
+                svcs_list = re.sub(" +", " ", svcs_list)
+                # Followed by stripping any leading and trailing leftovers...
+                svcs_list = svcs_list.strip()
                 # Generate our content for the packaging...
                 generate_services_entry(d, svc, prior, svcs_list)
                 # Handle special processing for each item in this list...
