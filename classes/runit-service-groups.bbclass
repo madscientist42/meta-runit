@@ -34,8 +34,8 @@ def generate_services_entry(d, svc_group, prior, svcs_list):
     print("#!/bin/sh -e", file=runfile)
     print(". ./svcs-list", file=runfile)
     if prior != 0:
-        print("sv -w0 check " + packagename + "-" + str(prior), file=runfile)
-    print("sv -w0 start $SVCS_LIST", file=runfile)
+        print("sv -w2 check " + packagename + "-" + str(prior), file=runfile)
+    print("sv start $SVCS_LIST", file=runfile)
     print("exec pause", file=runfile)
     runfile.close()
     # Make sure the run is executable...
@@ -57,7 +57,7 @@ def generate_services_entry(d, svc_group, prior, svcs_list):
     print(". ./svcs-list", file=finishfile)
     print("sv once $SVCS_LIST", file=finishfile)
     print("sv 1 $SVCS_LIST", file=finishfile)
-    print("pause 2", file=finishfile)
+    print("sleep 2", file=finishfile)
     print("sv stop $SVCS_LIST", file=finishfile)
     finishfile.close()    
     # Make sure the finish is executable...
