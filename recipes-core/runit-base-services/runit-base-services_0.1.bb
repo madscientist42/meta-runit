@@ -105,32 +105,31 @@ install_serial_consoles() {
         export SERIAL_CONSOLES=`echo "${SERIAL_CONSOLE}" | sed 's/ /\;/g'` 
     fi 
 
-	if [ ! -z "${SERIAL_CONSOLES}" ] ; then
-        # Iterate our list... (Note: Leave "tmp" and all it entails IN here...it's a workaround
-        # for something bitbake can't do expansion-wise...)
-        tmp="${SERIAL_CONSOLES}"
-		for entry in $tmp ; do
-            # Fetch out the tty device and the baudrate for each entry in the SERIAL_CONSOLES param...
-			baudrate=`echo $entry | sed 's/\;.*//'`
-			ttydev=`echo $entry | sed -e 's/^[0-9]*\;//' -e 's/\;.*//'`
+    # Iterate our list... (Note: Leave "tmp" and all it entails IN here...it's a workaround
+    # for something bitbake can't do expansion-wise...)  Handle "console" here transparently
+    # because we want it on anything where the console isn't a serial one on the device.
+    tmp="115200;console ${SERIAL_CONSOLES}"
+    for entry in $tmp ; do
+        # Fetch out the tty device and the baudrate for each entry in the SERIAL_CONSOLES param...
+        baudrate=`echo $entry | sed 's/\;.*//'`
+        ttydev=`echo $entry | sed -e 's/^[0-9]*\;//' -e 's/\;.*//'`
 
-            # With it in hand, dynamically generate runit service entries and enable them in the 
-            # default set out of box...
-            svcpath="${D}${runit-svcdir}/getty-${ttydev}"
-            conffile="${svcpath}/conf"
-            install -d ${svcpath}
-            ln -s ../getty-generic/run ${svcpath}
-            ln -s ../getty-generic/finish ${svcpath}
-            echo 'GETTY_ARGS="-L"' > ${conffile}
-            echo 'if [ -x /sbin/agetty -o -x /bin/agetty ]; then' >> ${conffile}
-	        echo '    # util-linux specific settings' >> ${conffile}
-	        echo '    GETTY_ARGS="${GETTY_ARGS} -8"' >> ${conffile}
-            echo 'fi' >> ${conffile}
-            echo 'BAUD_RATE='$baudrate >> ${conffile}
-            echo 'TERM_NAME=vt100' >> ${conffile}
-            ln -s ${runit-svcdir}/getty-${ttydev} ${D}${runit-runsvdir}/default
-		done
-    fi
+        # With it in hand, dynamically generate runit service entries and enable them in the 
+        # default set out of box...
+        svcpath="${D}${runit-svcdir}/getty-${ttydev}"
+        conffile="${svcpath}/conf"
+        install -d ${svcpath}
+        ln -s ../getty-generic/run ${svcpath}
+        ln -s ../getty-generic/finish ${svcpath}
+        echo 'GETTY_ARGS="-L"' > ${conffile}
+        echo 'if [ -x /sbin/agetty -o -x /bin/agetty ]; then' >> ${conffile}
+        echo '    # util-linux specific settings' >> ${conffile}
+        echo '    GETTY_ARGS="${GETTY_ARGS} -8"' >> ${conffile}
+        echo 'fi' >> ${conffile}
+        echo 'BAUD_RATE='$baudrate >> ${conffile}
+        echo 'TERM_NAME=vt100' >> ${conffile}
+        ln -s ${runit-svcdir}/getty-${ttydev} ${D}${runit-runsvdir}/default
+    done
 }
 DO_SERIAL_CONSOLES = "${@bb.utils.contains('DISTRO_FEATURES', 'sysvinit', '', 'install_serial_consoles', d)}"
 do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', '${DO_SERIAL_CONSOLES}', '', d)} "
