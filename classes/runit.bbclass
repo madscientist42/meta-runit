@@ -73,7 +73,7 @@ enable_default_services() {
 
     # Figure out default modifiers.  Default presumes "default" so we don't
     # parse "single" right now (Doesn't make sense...)
-    options=`echo ${RUNIT_DEFAULT_MODS} | awk -F ";" '{ print $1 " " $2 " " $3 " " $4 " " $5 }'`
+    options=`echo "${RUNIT_DEFAULT_MODS}" | awk -F ";" '{ print $1 " " $2 " " $3 " " $4 }'`
 
     cd ${D}${runit-svcdir}
     for svc in *; do
@@ -100,7 +100,7 @@ enable_default_services() {
                         echo "     mkdir -p \$BASE_LOGGING_DIR/$svc"  >> $logsv
                         echo "     chown -R log:log \$BASE_LOGGING_DIR/$svc" >> $logsv
                         echo "fi" >> $logsv
-                        [ "$option" = "log-no-ts" ] && timestamping="-tt"
+                        [ "$option" = "log" ] && timestamping="-tt"
                         echo "exec chpst -ulog svlogd $timestamping \$BASE_LOGGING_DIR/$svc" >> $logsv
                         chmod a+x $logsv
                     fi
@@ -126,8 +126,8 @@ enable_services() {
     for entry in $tmp; do
 
         # First field is always the service, followed by up to three optional values
-        svc=`echo $entry | awk -F ";" '{ print $1 }'`
-        options=`echo $entry | awk -F ";" '{ print $2 " " $3 " " $4 " " $5 }'`
+        svc=`echo "$entry" | awk -F ";" '{ print $1 }'`
+        options=`echo "$entry" | awk -F ";" '{ print $2 " " $3 " " $4 " " $5 }'`
 
         # Figure out where to put things...  Can be single or default, enable simple logging
         # or specify an order prefix for the runsvdir entry...  You can specify a service
