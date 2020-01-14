@@ -77,7 +77,7 @@ python process_service_group_entries() {
 
     # Check to see if we even have groupings declared...
     num_groups = d.getVar("NUM_SVC_GROUPS")
-    if num_groups != "":
+    if (num_groups != None) and (num_groups != ""):
         # Handle the defaults pre-staging...
         preprocess_default_svcs(d)
         default_svc_grp = list(d.getVar("DEFAULT_SVC_GROUP").split(" "))
@@ -87,6 +87,10 @@ python process_service_group_entries() {
 
         # Now, generate our defined scripting for the services groups.
         svc_groups = int(num_groups)
+        # Clamp the service groups number to our maximum.  Any larger is
+        # "ignored"...
+        if svc_groups > 998 :
+            svc_groups = 998
         prior = 0
         for svc in range(1, svc_groups + 1) :
             svcs_list = d.getVar("SVC_GROUP_" + str(svc), expand=True)
