@@ -10,6 +10,7 @@ CONFIGFS_DIR="/sys/kernel/config/device-tree/overlays"
 #  an alternate, "official" one that may be patched in or is 
 #  provided with some of the latest kernels that differs slightly 
 #  in use.  We'll need to fix this script when we encounter it.)
+modprobe dtbocfg
 lsmod | grep -q dtbocfg
 if [ $? -eq 0 ] ; then
     # Double check to make sure we have the dtbocfg hook fully
