@@ -90,7 +90,11 @@ enable_default_services() {
                     # Check to see if there's already a log runit spec file there
                     # or not...
                     if [ ! -d $logsv ] ; then 
-                        # Nope.  Generate one for the user since they specified logging
+                       # Nope.  Generate one for the user since they specified logging. Check to
+                        # see if they have a logging config in the service run directory, symlink it
+                        # into the logging directory if we're making it.  If they don't and we have
+                        # a global /etc/defaults/svlogd.conf file, symlink THAT in.  Make sure the 
+                        # permissions allow for read by anyone and it'll just work
                         mkdir -p $logsv
                         logsv="$logsv/run"
                         echo "#!/bin/sh" > $logsv
@@ -98,6 +102,13 @@ enable_default_services() {
                         echo "[ -z \"\$BASE_LOGGING_DIR\" ] && BASE_LOGGING_DIR=\"/var/log\"" >> $logsv 
                         echo "if [ ! -e \$BASE_LOGGING_DIR/$svc ] ; then" >> $logsv
                         echo "     mkdir -p \$BASE_LOGGING_DIR/$svc"  >> $logsv
+                        echo "     if [ ! -e ${runit-svcdir}/$svc/svlogd.conf ]; then" >> $logsv
+                        echo "          if [ -e /etc/default/svlogd.conf ] ; then" >> $logsv
+                        echo "              ln -s /etc/default/svlogd.conf \$BASE_LOGGING_DIR/$svc/config" >> $logsv
+                        echo "          else" >> $logsv
+                        echo "     else" >> $logsv
+                        echo "          ln -s ${runit-svcdir}/$svc/svlogd.conf \$BASE_LOGGING_DIR/$svc/config" >> $logsv
+                        echo "     fi" >> $logsv
                         echo "     chown -R log:log \$BASE_LOGGING_DIR/$svc" >> $logsv
                         echo "fi" >> $logsv
                         [ "$option" = "log" ] && timestamping="-tt"
@@ -149,7 +160,11 @@ enable_services() {
                     # Check to see if there's already a log runit spec file there
                     # or not...
                     if [ ! -d $logsv ] ; then 
-                        # Nope.  Generate one for the user since they specified logging
+                        # Nope.  Generate one for the user since they specified logging. Check to
+                        # see if they have a logging config in the service run directory, symlink it
+                        # into the logging directory if we're making it.  If they don't and we have
+                        # a global /etc/defaults/svlogd.conf file, symlink THAT in.  Make sure the 
+                        # permissions allow for read by anyone and it'll just work
                         mkdir -p $logsv
                         logsv="$logsv/run"
                         echo "#!/bin/sh" > $logsv
@@ -157,14 +172,19 @@ enable_services() {
                         echo "[ -z \"\$BASE_LOGGING_DIR\" ] && BASE_LOGGING_DIR=\"/var/log\"" >> $logsv 
                         echo "if [ ! -e \$BASE_LOGGING_DIR/$svc ] ; then" >> $logsv
                         echo "     mkdir -p \$BASE_LOGGING_DIR/$svc"  >> $logsv
+                        echo "     if [ ! -e ${runit-svcdir}/$svc/svlogd.conf ]; then" >> $logsv
+                        echo "          if [ -e /etc/default/svlogd.conf ] ; then" >> $logsv
+                        echo "              ln -s /etc/default/svlogd.conf \$BASE_LOGGING_DIR/$svc/config" >> $logsv
+                        echo "          else" >> $logsv
+                        echo "     else" >> $logsv
+                        echo "          ln -s ${runit-svcdir}/$svc/svlogd.conf \$BASE_LOGGING_DIR/$svc/config" >> $logsv
+                        echo "     fi" >> $logsv
                         echo "     chown -R log:log \$BASE_LOGGING_DIR/$svc" >> $logsv
                         echo "fi" >> $logsv
-                        [ "$option" = "log-no-ts" ] && timestamping="-tt"
+                        [ "$option" = "log" ] && timestamping="-tt"
                         echo "exec chpst -ulog svlogd $timestamping \$BASE_LOGGING_DIR/$svc" >> $logsv
                         chmod a+x $logsv
                     fi
-                    # Config, if it exists in the /etc/defaults dir, is global unless overridden by the recipe
-                    [ ! -e ${D}${runit-svcdir}/$svc/log/config ] && ln -s /etc/default/svlogd.conf ${D}${runit-svcdir}/$svc/log/config
                     ;;
 
                 down | once )
