@@ -108,7 +108,7 @@ install_serial_consoles() {
     # Iterate our list... (Note: Leave "tmp" and all it entails IN here...it's a workaround
     # for something bitbake can't do expansion-wise...)  Handle "console" here transparently
     # because we want it on anything where the console isn't a serial one on the device.
-    tmp="115200;console ${SERIAL_CONSOLES}"
+    tmp="${SERIAL_CONSOLES}"
     for entry in $tmp ; do
         # Fetch out the tty device and the baudrate for each entry in the SERIAL_CONSOLES param...
         baudrate=`echo $entry | sed 's/\;.*//'`
