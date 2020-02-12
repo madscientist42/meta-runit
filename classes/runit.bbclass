@@ -105,7 +105,7 @@ enable_default_services() {
                         echo "     if [ ! -e ${runit-svcdir}/$svc/svlogd.conf ]; then" >> $logsv
                         echo "          if [ -e /etc/default/svlogd.conf ] ; then" >> $logsv
                         echo "              ln -s /etc/default/svlogd.conf \$BASE_LOGGING_DIR/$svc/config" >> $logsv
-                        echo "          else" >> $logsv
+                        echo "          fi" >> $logsv
                         echo "     else" >> $logsv
                         echo "          ln -s ${runit-svcdir}/$svc/svlogd.conf \$BASE_LOGGING_DIR/$svc/config" >> $logsv
                         echo "     fi" >> $logsv
@@ -175,7 +175,7 @@ enable_services() {
                         echo "     if [ ! -e ${runit-svcdir}/$svc/svlogd.conf ]; then" >> $logsv
                         echo "          if [ -e /etc/default/svlogd.conf ] ; then" >> $logsv
                         echo "              ln -s /etc/default/svlogd.conf \$BASE_LOGGING_DIR/$svc/config" >> $logsv
-                        echo "          else" >> $logsv
+                        echo "          fi" >> $logsv
                         echo "     else" >> $logsv
                         echo "          ln -s ${runit-svcdir}/$svc/svlogd.conf \$BASE_LOGGING_DIR/$svc/config" >> $logsv
                         echo "     fi" >> $logsv
