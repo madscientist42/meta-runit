@@ -5,6 +5,7 @@ RDEPENDS_${PN} += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', 'runit runit
 # Set up some default behaviors
 RUNIT-SERVICES ??= ""
 runit-svcdir = "/etc/sv"
+runit-coresvcsdir = "/etc/runit/core-services"
 runit-runsvdir = "/etc/runit/runsvdir"
 
 # This class will be included in any recipe that supports runit services configs,
@@ -19,14 +20,21 @@ python __anonymous() {
             d.setVar("INHIBIT_UPDATERCD_BBCLASS", "1")
 }
 
-# Services specs should be set up in the files under sv in the files directory 
-# and specfied at least as a directory (Preferably, each piece part in the 
-# tree to support devtool properly) 
+# Services specs should be set up in the files under sv in the files directory
+# and specfied at least as a directory (Preferably, each piece part in the
+# tree to support devtool properly)
 install_runit_services() {
-    if [ -d ${WORKDIR}/sv ] ; then 
-        # Ensure we've got a proper services directory in the packaging...
-        mkdir -p ${D}${runit-svcdir}
+    if [ -d ${WORKDIR}/core-services ] ; then
+        # Ensure we have a proper core-services directory in the packaging...
+        install -d ${D}${runit-coresvcsdir}
+        for I in ${WORKDIR}/core-services/* ; do
+            install -m 0755 $I ${D}/etc/runit/core-services
+        done
+    fi
 
+    if [ -d ${WORKDIR}/sv ] ; then
+        # Ensure we've got a proper services directory in the packaging...
+        install -d ${D}${runit-svcdir}
         cp -rap --no-preserve=ownership ${WORKDIR}/sv/* ${D}${runit-svcdir}
         chmod u+x ${D}${runit-svcdir}/*/run
     fi
@@ -38,11 +46,11 @@ do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', 'inst
 # because we have a service in place.  (We'll handle any init.d entries that are
 # left in there, but as people add services for runit in recipes or as the overlays
 # in this metadata layer, we want to remove them...)
-# 
+#
 # FIXME - This just blindly removes everything in the packaging for sysvinit and systemd stuff
 #         For now, this is, "fine," but needs to be revisited with "better".
 cleanup_sysvinit_dirs() {
-    rm -rvf ${D}/etc/rc*.d
+    rm -rf ${D}/etc/rc*.d
     dirlist=`find ${D}/etc/ -type d -name 'init.d' -print`
     for dir in $dirlist; do
         rm -rf $dir
@@ -60,7 +68,7 @@ do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', '${DO
 # In the first way, if you specify "DEFAULT" in all caps in the RUNIT_SERVICES
 # list, it will presume everything is to be put in the default runlevel instead
 # of "once" runlevel part.
-# 
+#
 # In the second way, we process it in steps much like we do SERIAL_CONSOLES
 # wherein you specify the service name to be enabled, followed by one or more
 # optional parameters where you specify "once" for run-once at start and
@@ -82,24 +90,24 @@ enable_default_services() {
         for option in $options ; do
             case $option in
                 log | log-no-ts )
-                    # User has specified simple logging support for the service 
+                    # User has specified simple logging support for the service
                     # (Which, technically, can be done out of the sv dir, but
                     #  this lets a user specify it even simpler than that way...)
                     timestamping=""
                     logsv="${D}${runit-svcdir}/$svc/log"
                     # Check to see if there's already a log runit spec file there
                     # or not...
-                    if [ ! -d $logsv ] ; then 
+                    if [ ! -d $logsv ] ; then
                        # Nope.  Generate one for the user since they specified logging. Check to
                         # see if they have a logging config in the service run directory, symlink it
                         # into the logging directory if we're making it.  If they don't and we have
-                        # a global /etc/defaults/svlogd.conf file, symlink THAT in.  Make sure the 
+                        # a global /etc/defaults/svlogd.conf file, symlink THAT in.  Make sure the
                         # permissions allow for read by anyone and it'll just work
                         mkdir -p $logsv
                         logsv="$logsv/run"
                         echo "#!/bin/sh" > $logsv
-                        echo "[ -e /etc/default/logging ] && source /etc/default/logging" >> $logsv 
-                        echo "[ -z \"\$BASE_LOGGING_DIR\" ] && BASE_LOGGING_DIR=\"/var/log\"" >> $logsv 
+                        echo "[ -e /etc/default/logging ] && source /etc/default/logging" >> $logsv
+                        echo "[ -z \"\$BASE_LOGGING_DIR\" ] && BASE_LOGGING_DIR=\"/var/log\"" >> $logsv
                         echo "if [ ! -e \$BASE_LOGGING_DIR/$svc ] ; then" >> $logsv
                         echo "     mkdir -p \$BASE_LOGGING_DIR/$svc"  >> $logsv
                         echo "     if [ ! -e ${runit-svcdir}/$svc/svlogd.conf ]; then" >> $logsv
@@ -122,7 +130,7 @@ enable_default_services() {
                 down | once )
                     touch ${D}${runit-svcdir}/$svc/$option
                     ;;
-            esac    
+            esac
         done
     done
 }
@@ -130,7 +138,7 @@ enable_default_services() {
 enable_services() {
     install -d ${D}${runit-runsvdir}
     install -d ${D}${runit-runsvdir}/single
-    install -d ${D}${runit-runsvdir}/default   
+    install -d ${D}${runit-runsvdir}/default
 
     # Do this off of what's listed...
     tmp="${RUNIT-SERVICES}"
@@ -151,25 +159,25 @@ enable_services() {
                     linkpath="$option"
                     ;;
 
-                log | log-no-ts ) 
-                    # User has specified simple logging support for the service 
+                log | log-no-ts )
+                    # User has specified simple logging support for the service
                     # (Which, technically, can be done out of the sv dir, but
                     #  this lets a user specify it even simpler than that way...)
                     timestamping=""
                     logsv="${D}${runit-svcdir}/$svc/log"
                     # Check to see if there's already a log runit spec file there
                     # or not...
-                    if [ ! -d $logsv ] ; then 
+                    if [ ! -d $logsv ] ; then
                         # Nope.  Generate one for the user since they specified logging. Check to
                         # see if they have a logging config in the service run directory, symlink it
                         # into the logging directory if we're making it.  If they don't and we have
-                        # a global /etc/defaults/svlogd.conf file, symlink THAT in.  Make sure the 
+                        # a global /etc/defaults/svlogd.conf file, symlink THAT in.  Make sure the
                         # permissions allow for read by anyone and it'll just work
                         mkdir -p $logsv
                         logsv="$logsv/run"
                         echo "#!/bin/sh" > $logsv
-                        echo "[ -e /etc/default/logging ] && source /etc/default/logging" >> $logsv 
-                        echo "[ -z \"\$BASE_LOGGING_DIR\" ] && BASE_LOGGING_DIR=\"/var/log\"" >> $logsv 
+                        echo "[ -e /etc/default/logging ] && source /etc/default/logging" >> $logsv
+                        echo "[ -z \"\$BASE_LOGGING_DIR\" ] && BASE_LOGGING_DIR=\"/var/log\"" >> $logsv
                         echo "if [ ! -e \$BASE_LOGGING_DIR/$svc ] ; then" >> $logsv
                         echo "     mkdir -p \$BASE_LOGGING_DIR/$svc"  >> $logsv
                         echo "     if [ ! -e ${runit-svcdir}/$svc/svlogd.conf ]; then" >> $logsv
@@ -190,7 +198,7 @@ enable_services() {
                 down | once )
                     touch ${D}${runit-svcdir}/$svc/$option
                     ;;
-            esac    
+            esac
         done
         ln -s ${runit-svcdir}/$svc ${D}${runit-runsvdir}/$linkpath/$order$svc
     done

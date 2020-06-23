@@ -48,13 +48,13 @@ SRC_URI = " \
 
 S = "${WORKDIR}"
 
-# We're runit and additionally CMake as a recipe.  CMake's in 
+# We're runit and additionally CMake as a recipe.  CMake's in
 # the mix for the purposes of scooping up a few /sbin binaries
 # that we need for proper function of our base services set.
 inherit runit cmake
 
 # We want some of the services to be template ones (Like the getty-generic one...)
-# so, we'll be enabling the services selectively here.  It should be noted that 
+# so, we'll be enabling the services selectively here.  It should be noted that
 # we're making a bit of a gearshift if you have socklogd set as a distro feature.
 # If you're using socklogd, there's no need to use syslogd,
 RUNIT-SERVICES = " \
@@ -80,9 +80,6 @@ install_runit_initscripts() {
     install -m 0755 ${WORKDIR}/modules-load ${D}/sbin
     install -m 0755 ${WORKDIR}/shutdown ${D}/sbin
     install -m 0755 ${WORKDIR}/svstats ${D}/sbin
-	for I in ${WORKDIR}/core-services/* ; do
-		install -m 0755 $I ${D}/etc/runit/core-services
-	done 
 
     # Put some stuff that was in ${D}/usr/sbin into ${D}/sbin because
     # it's easier to postprocess move them into the right place than
@@ -102,8 +99,8 @@ install_serial_consoles() {
     # defined instead, pour it into the other with the expected formatting...
     if [ -z "${SERIAL_CONSOLES}" ] ; then
         echo Handling old method...
-        export SERIAL_CONSOLES=`echo "${SERIAL_CONSOLE}" | sed 's/ /\;/g'` 
-    fi 
+        export SERIAL_CONSOLES=`echo "${SERIAL_CONSOLE}" | sed 's/ /\;/g'`
+    fi
 
     # Iterate our list... (Note: Leave "tmp" and all it entails IN here...it's a workaround
     # for something bitbake can't do expansion-wise...)  Handle "console" here transparently
@@ -114,7 +111,7 @@ install_serial_consoles() {
         baudrate=`echo $entry | sed 's/\;.*//'`
         ttydev=`echo $entry | sed -e 's/^[0-9]*\;//' -e 's/\;.*//'`
 
-        # With it in hand, dynamically generate runit service entries and enable them in the 
+        # With it in hand, dynamically generate runit service entries and enable them in the
         # default set out of box...
         svcpath="${D}${runit-svcdir}/getty-${ttydev}"
         conffile="${svcpath}/conf"
@@ -134,11 +131,11 @@ install_serial_consoles() {
 DO_SERIAL_CONSOLES = "${@bb.utils.contains('DISTRO_FEATURES', 'sysvinit', '', 'install_serial_consoles', d)}"
 do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', '${DO_SERIAL_CONSOLES}', '', d)} "
 
-# Now, handle overriding the case where we have been told to use socklogd for things, and to quietly 
+# Now, handle overriding the case where we have been told to use socklogd for things, and to quietly
 # shift gears to using it for syslog, etc...  There's a few /etc/sv entries we need to overwrite in the install...
 copy_socklogd_support() {
         cp -rap --no-preserve=ownership ${WORKDIR}/socklogd/sv/* ${D}${runit-svcdir}
-        chmod u+x ${D}${runit-svcdir}/*/run  
+        chmod u+x ${D}${runit-svcdir}/*/run
 }
 DO_SOCKLOGD_SUPPORT = "${@bb.utils.contains('DISTRO_FEATURES', 'socklogd', 'copy_socklogd_support', '', d)}"
 do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', '${DO_SOCKLOGD_SUPPORT}', '', d)} "
