@@ -1,5 +1,5 @@
 # Extend the search path to here first...
-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 # Make it a runit capable recipe...
 inherit runit

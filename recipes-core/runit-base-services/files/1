@@ -7,9 +7,25 @@ msg "Welcome to Poky Linux!"
 
 [ -r /etc/rc.conf ] && . /etc/rc.conf
 
+# Handle the possibility of bootsplashes mostly transparently- this
+# entails defining a few functions and then redefining them with whatever
+# trappings we need to do this right when it's supplied.  This lets us
+# do psplash, voidsplash, exquisite, etc. for Phase 1 boot status updates.
+[ -r /etc/default/splash ] && . /etc/default/splash
+if [ "$(type -t set_splash_progress)" != "function" ] ; then
+	# We didn't have the functions defined, presume we need to stub them
+	# out accordingly...
+	alias incr_splash_progress="#"
+	alias set_splash_progress="#"
+	alias set_splash_message="#"
+	alias shutdown_splash="#"
+fi
+
 # Start core services: one-time system tasks.
 detect_virt
 for f in /etc/runit/core-services/*.sh; do
+	# Increment prograss and show the currently running script
+	incr_splash_progress
     [ -r $f ] && . $f
 done
 
@@ -25,3 +41,6 @@ mkdir -p /run/runit
 # install -m100 /dev/null /run/runit/stopit
 
 msg_done "Runlevel 1"
+
+# Close off the splash screen for right now.
+shutdown_splash

@@ -16,5 +16,3 @@ if [ $? -eq 0 ] ; then
     fi
 fi
 
-# Regardless of presence or not, we're a one-shot.
-sv stop bootchart

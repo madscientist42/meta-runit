@@ -1,5 +1,5 @@
 # Extend the search path to here first...
-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 # Add the services set(s)...
 SRC_URI += " \
@@ -19,11 +19,11 @@ RUNIT_BT_SVCS = " \
     ${runit-runsvdir}/bluetooth \
     "
 RUNIT_BT_REMOVES = " \
-    ${sysconfdir}/init.d/bluetooth \        
+    ${sysconfdir}/init.d/bluetooth \
     ${datadir}/dbus-1 \
     "
-FILES_${PN}_append = "${@bb.utils.contains('DISTRO_FEATURES', 'runit', '${RUNIT_BT_SVCS}', '', d)}"
-FILES_${PN}_remove = "${@bb.utils.contains('DISTRO_FEATURES', 'runit', '${RUNIT_BT_REMOVES}', '', d)}"
+FILES:${PN}:append = "${@bb.utils.contains('DISTRO_FEATURES', 'runit', '${RUNIT_BT_SVCS}', '', d)}"
+FILES:${PN}:remove = "${@bb.utils.contains('DISTRO_FEATURES', 'runit', '${RUNIT_BT_REMOVES}', '', d)}"
 
-    
-    
+
+

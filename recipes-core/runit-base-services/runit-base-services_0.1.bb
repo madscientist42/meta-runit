@@ -44,6 +44,9 @@ SRC_URI = " \
     file://sv/bootchart/run \
     file://socklogd/sv/syslog/run \
     file://socklogd/sv/klog/run \
+    file://sv/one-shot-test/run \
+    file://sv/one-shot-test/down \
+    file://sv/one-shot-test/check \
     "
 
 S = "${WORKDIR}"
@@ -62,7 +65,7 @@ RUNIT-SERVICES = " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'socklogd', 'syslog;log', 'syslog', d)} \
     klog \
     hwclock \
-    bootchart \
+    bootchart;once \
     "
 
 # IF we're set to run with runit in the mix, copy in some new things...

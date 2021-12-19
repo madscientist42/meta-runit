@@ -5,7 +5,7 @@
 #        for it and ELLout out and put it in your layer first...)
 
 # Extend the search path to here first...
-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 # Add the services set(s)...
 SRC_URI += " \
