@@ -85,6 +85,8 @@ enable_default_services() {
 
     cd ${D}${runit-svcdir}
     for svc in *; do
+        # Catch situations where we don't have ANY files (* comes back for the globbing which is broken for this.)
+        [ -f "$svc" ] || continue
         svc="$(basename $svc)"
         ln -s ${runit-svcdir}/$svc ${D}${runit-runsvdir}/default
         for option in $options ; do
