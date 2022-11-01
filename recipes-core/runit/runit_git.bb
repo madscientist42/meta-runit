@@ -26,7 +26,7 @@ setup_runsvdir() {
     ln -s /etc/sv ${D}/service
 }
 do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', 'setup_runsvdir', '', d)} "
-FILES_${PN} += "/service"
+FILES:${PN} += "/service"
 
 # Do some additional OpenEmbedded specific tasks for install if we're told we're using runit-init as init.
 do_runit_init_as_init() {
