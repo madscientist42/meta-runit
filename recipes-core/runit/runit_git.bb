@@ -4,14 +4,14 @@ HOMEPAGE = "https://github.com/madscientist42/runit"
 LIC_FILES_CHKSUM = "file://COPYING.md;md5=3cf56266ad83a2793f171707969e46d1"
 
 SRC_URI = " \
-	git://github.com/madscientist42/runit.git;protocol=https \
+	git://github.com/madscientist42/runit.git;protocol=https;branch=master \
 	"
 
 SRCREV = "e27d217f8fc6c202a43001333b31a259efeab08c"
 
 S = "${WORKDIR}/git"
 
-inherit cmake 
+inherit cmake
 
 # Make our lives a bit easier.  While the install works RIGHT for CMake for the packaging, we
 # want a bit of init-scripting legerdemain installed up-front as a part of this package (We
