@@ -13,7 +13,7 @@ SRC_URI += " \
 RUNIT-SERVICES = "DEFAULT"
 
 # Add any of our run entries to the respective package sets...
-FILES_avahi-daemon += " \
+FILES:avahi-daemon += " \
     /etc/sv \
     /etc/runit \
     "

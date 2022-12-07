@@ -44,9 +44,6 @@ SRC_URI = " \
     file://sv/bootchart/run \
     file://socklogd/sv/syslog/run \
     file://socklogd/sv/klog/run \
-    file://sv/one-shot-test/run \
-    file://sv/one-shot-test/down \
-    file://sv/one-shot-test/check \
     "
 
 S = "${WORKDIR}"

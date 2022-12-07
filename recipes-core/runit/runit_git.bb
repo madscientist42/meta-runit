@@ -1,5 +1,5 @@
 SUMMARY = "runit init and services system"
-LICENSE = "BSD"
+LICENSE = "BSD-2-Clause"
 HOMEPAGE = "https://github.com/madscientist42/runit"
 LIC_FILES_CHKSUM = "file://COPYING.md;md5=3cf56266ad83a2793f171707969e46d1"
 

@@ -25,5 +25,12 @@ RUNIT_BT_REMOVES = " \
 FILES:${PN}:append = "${@bb.utils.contains('DISTRO_FEATURES', 'runit', '${RUNIT_BT_SVCS}', '', d)}"
 FILES:${PN}:remove = "${@bb.utils.contains('DISTRO_FEATURES', 'runit', '${RUNIT_BT_REMOVES}', '', d)}"
 
-
+# Now, then, let's ENFORCE the above removes from the list so that it doesn't
+# complain about them as they might happen under right conditions....
+do_deletes() {
+    for DELETE in ${RUNIT_BT_REMOVES}; do
+        rm -rvf ${D}/$DELETE
+    done
+}
+do_install[postfuncs] = " do_deletes "
 
