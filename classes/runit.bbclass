@@ -84,11 +84,16 @@ enable_default_services() {
     options=`echo "${RUNIT_DEFAULT_MODS}" | awk -F ";" '{ print $1 " " $2 " " $3 " " $4 }'`
 
     cd ${D}${runit-svcdir}
-    for svc in *; do
+    for svc in * ; do
         # Catch situations where we don't have ANY files (* comes back for the globbing which is broken for this.)
-        [ -f "$svc" ] || continue
+        if [ ! -d "$svc" ] ; then 
+            continue
+        fi
+
+        # Link the services in turn...
         svc="$(basename $svc)"
         ln -s ${runit-svcdir}/$svc ${D}${runit-runsvdir}/default
+
         for option in $options ; do
             case $option in
                 log | log-no-ts )
@@ -207,4 +212,3 @@ enable_services() {
 }
 DO_DEFAULT_SVCS = "${@bb.utils.contains('RUNIT-SERVICES', 'DEFAULT', 'enable_default_services', 'enable_services', d)}"
 do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', '${DO_DEFAULT_SVCS}', '', d)} "
-
