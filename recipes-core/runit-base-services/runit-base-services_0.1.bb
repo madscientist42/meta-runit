@@ -2,7 +2,7 @@ DESCRIPTION = "Baseline runit services configuration set"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://COPYING;md5=91cc138cfd680c457be3678a29aaf4a3"
 
-RDEPENDS_${PN} = " \
+RDEPENDS:${PN} = " \
     millisleep \
     coreutils \
     ${@bb.utils.contains('DISTRO_FEATURES', 'socklogd', 'socklogd', '', d)} \
