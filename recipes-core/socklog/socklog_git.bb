@@ -15,11 +15,10 @@ inherit cmake
 
 PACKAGES = "${PN}-src ${PN}d ${PN}d-dbg"
 
-FILES_${PN}-src = " \
+FILES:${PN}-src = " \
     /usr/src \
     "
-
-FILES_${PN}d = " \
+FILES:${PN}d = " \
     /usr/sbin/socklog-check \
     /usr/sbin/uncat \
     /usr/sbin/tryto \
@@ -28,7 +27,7 @@ FILES_${PN}d = " \
     /usr/sbin/socklog \
     "    
 
-FILES_${PN}d-dbg = " \
+FILES:${PN}d-dbg = " \
     /usr/sbin/.debug/socklog-check \
     /usr/sbin/.debug/uncat \
     /usr/sbin/.debug/tryto \

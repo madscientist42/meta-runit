@@ -11,7 +11,7 @@ SRCREV = "v${PV}"
 
 # This is just a highly specialized BASH helper script and wants some stuff
 # from psmisc...which is actually a bit useful by and of itself...
-RDEPENDS_${PN} = "bash psmisc"
+RDEPENDS:${PN} = "bash psmisc"
 
 S = "${WORKDIR}/git"
 
@@ -31,4 +31,4 @@ do_install() {
     install -m 755 ${S}/vsv.patched ${D}/usr/sbin/vsv
 }
 
-FILES_${PN} = "/usr/sbin/vsv"
+FILES:${PN} = "/usr/sbin/vsv"
