@@ -11,6 +11,15 @@ SRCREV = "e27d217f8fc6c202a43001333b31a259efeab08c"
 
 S = "${WORKDIR}/git"
 
+# Cheat a bit.  We used to be able to specify out core services files by
+# the initscripts hooks, so...since this broke at some point, to make this
+# generic- and you rather can't do without these core services files or
+# somesuch as that, you're going to see this RDEPEND on it or something 
+# like it (.bbappend it!!  Seriously- this is the baseline for this layer
+# and you want to override this RDEPENDS if you're not merely extending
+# that recipe.)
+RDEPENDS:${PN} += "runit-base-services"
+
 inherit cmake
 
 # Make our lives a bit easier.  While the install works RIGHT for CMake for the packaging, we
