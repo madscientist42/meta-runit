@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# Pick up our core-services/run files helpers...we MIGHT need one of them.
+. /etc/functions
+
+# Check to see if we have config changes...
+[ -e /etc/default/ptpd ] && . /etc/default/ptpd
+
+# Double check to see we have sane settings and if not, default them
+# in turn...
+[ -z "$PTPD_PID_FILE" ] && PTPD_PID_FILE="/var/run/ptpd.pid"
+[ -z "$PTPD_STATUS_FILE" ] && PTPD_PID_FILE="/var/run/ptpd.status"
+[ -z "$PTPD_CONFIG_FILE" ] && PTPD_PID_FILE="/etc/ptpd2.conf"
+
+# Check to see if we have the config file- no config, no start.  Tell the world and stop
+# ourselves...
+if [ ! -e $PTPD_CONFIG_FILE ] ; then
+    msg_error "ptpd -- Unable to find confg ($PTPD_CONFIG_FILE).  Stopping service."
+    sv stop ptpd
+fi
+
+# Launch the daemon...we've got everything.
+exec ptpd --global:lock_file=$PTPD_PID_FILE --global:status_file=$PTPD_STATUS_FILE -c $PTPD_CONFIG_FILE 2>&1
