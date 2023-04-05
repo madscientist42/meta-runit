@@ -2,7 +2,7 @@
 
 # We want to wait to 'syslog' being "up" before starting this- so we can get
 # feedback on a fail of config, etc.
-sv check -w 7 syslog
+sv check syslog
 
 # Pick up our core-services/run files helpers...we MIGHT need one of them.
 . /etc/runit/functions
@@ -13,8 +13,8 @@ sv check -w 7 syslog
 # Double check to see we have sane settings and if not, default them
 # in turn...
 [ -z "$PTPD_PID_FILE" ] && PTPD_PID_FILE="/var/run/ptpd.pid"
-[ -z "$PTPD_STATUS_FILE" ] && PTPD_PID_FILE="/var/run/ptpd.status"
-[ -z "$PTPD_CONFIG_FILE" ] && PTPD_PID_FILE="/etc/ptpd2.conf"
+[ -z "$PTPD_STATUS_FILE" ] && PTPD_STATUS_FILE="/var/run/ptpd.status"
+[ -z "$PTPD_CONFIG_FILE" ] && PTPD_CONFIG_FILE="/etc/ptpd2.conf"
 
 # Check to see if we have the config file- no config, no start.  Tell the world and stop
 # ourselves...

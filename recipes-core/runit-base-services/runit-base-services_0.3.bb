@@ -1,6 +1,9 @@
 DESCRIPTION = "Baseline runit services configuration set"
 LICENSE = "MIT"
-LIC_FILES_CHKSUM = "file://COPYING;md5=91cc138cfd680c457be3678a29aaf4a3"
+# Ignore the odd move "up" a directory here.  It's because the COPYING belongs
+# in the "project"- which has a CMake based C source set for where we're putting
+# ${S} to inside this all.
+LIC_FILES_CHKSUM = "file://../COPYING;md5=91cc138cfd680c457be3678a29aaf4a3"
 
 RDEPENDS:${PN} = " \
     millisleep \
@@ -18,9 +21,11 @@ SRC_URI = " \
     file://modules-load \
     file://shutdown \
     file://svstats \
-    file://halt.c \
-    file://pause.c \
-    file://CMakeLists.txt \
+    file://csrc/CMakeLists.txt \
+    file://csrc/halt.c \
+    file://csrc/halt.8 \
+    file://csrc/pause.c \
+    file://csrc/pause.1 \
     file://core-services/00-hwclock.sh \
     file://core-services/00-pseudofs.sh \
     file://core-services/01-kmods.sh\
@@ -46,7 +51,7 @@ SRC_URI = " \
     file://socklogd/sv/klog/run \
     "
 
-S = "${WORKDIR}"
+S = "${WORKDIR}/csrc"
 
 # We're runit and additionally CMake as a recipe.  CMake's in
 # the mix for the purposes of scooping up a few /sbin binaries

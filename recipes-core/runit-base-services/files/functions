@@ -72,8 +72,7 @@ svc_log() {
     # Generate syslog entries for the svc in question.  Presume that
     # if we have a log user, we also have, at minimum, a syslog and logger
     # present to generate the event entry.  If you've got logger, though
-    # it will not error out if the syslog daemon set is down, unable to
-    # talk, etc.
+    # it will not error out if the syslog daemon set is down, not there, etc.
     logger "$(get_svc_name) : $@"
 }
 

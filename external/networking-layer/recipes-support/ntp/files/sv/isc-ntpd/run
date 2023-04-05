@@ -2,7 +2,7 @@
 
 # We want to wait to 'syslog' being "up" before starting this- so we can get
 # feedback on a fail of config, etc.
-sv check -w 7 syslog
+sv -w7 check syslog
 
 # Pick up our core-services/run files helpers...we MIGHT need one of them.
 . /etc/runit/functions
@@ -10,7 +10,7 @@ sv check -w 7 syslog
 # Check for the presence of an "ntpd" user.  If one isn't present in the system,
 # warn the user and stop the service.  That way the supervisory server won't
 # keep trying to restart this one.
-check_for_user "ntpd"
+cat /etc/passwd | grep -q ntpd
 if [ $? -eq 1 ] ; then
     # Tell our user this isn't working and exit the service
     svc_log "ntpd user not present on system.  Stopping service."
