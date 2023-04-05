@@ -17,6 +17,7 @@ RUNIT_DEFAULT_MODS = "log"
 RUNIT_BT_SVCS = " \
     ${runit-svcdir}/bluetooth/run \
     ${runit-runsvdir}/bluetooth \
+    /usr/share \
     "
 RUNIT_BT_REMOVES = " \
     ${sysconfdir}/init.d/bluetooth \
