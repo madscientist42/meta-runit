@@ -47,7 +47,6 @@ SRC_URI = " \
     file://sv/sulogin/run \
     file://sv/syslog/run \
     file://sv/klog/run \
-    file://sv/bootchart/run \
     file://socklogd/sv/syslog/run \
     file://socklogd/sv/klog/run \
     "
@@ -68,7 +67,6 @@ RUNIT-SERVICES = " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'socklogd', 'syslog;log', 'syslog', d)} \
     klog \
     hwclock \
-    bootchart;once \
     "
 
 # IF we're set to run with runit in the mix, copy in some new things...
