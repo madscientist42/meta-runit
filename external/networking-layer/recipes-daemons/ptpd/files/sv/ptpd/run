@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# We want to wait to 'syslog' being "up" before starting this- so we can get
+# feedback on a fail of config, etc.
+sv check -w 7 syslog
+
 # Pick up our core-services/run files helpers...we MIGHT need one of them.
 . /etc/runit/functions
 
@@ -20,4 +24,4 @@ if [ ! -e $PTPD_CONFIG_FILE ] ; then
 fi
 
 # Launch the daemon...we've got everything.
-exec ptpd --global:lock_file=$PTPD_PID_FILE --global:status_file=$PTPD_STATUS_FILE -c $PTPD_CONFIG_FILE 2>&1
+exec ptpd2 --global:lock_file=$PTPD_PID_FILE --global:status_file=$PTPD_STATUS_FILE -c $PTPD_CONFIG_FILE 2>&1
