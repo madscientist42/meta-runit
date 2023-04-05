@@ -21,6 +21,7 @@ SRC_URI = " \
     file://modules-load \
     file://shutdown \
     file://svstats \
+    file://rsm \
     file://csrc/CMakeLists.txt \
     file://csrc/halt.c \
     file://csrc/halt.8 \
@@ -84,6 +85,7 @@ install_runit_initscripts() {
     install -m 0755 ${WORKDIR}/functions ${D}/etc/runit
     install -m 0755 ${WORKDIR}/modules-load ${D}/sbin
     install -m 0755 ${WORKDIR}/shutdown ${D}/sbin
+    install -m 0755 ${WORKDIR}/rsm ${D}/sbin
     install -m 0755 ${WORKDIR}/svstats ${D}/sbin
 
     # Put some stuff that was in ${D}/usr/sbin into ${D}/sbin because
