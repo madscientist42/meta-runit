@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Pick up our core-services/run files helpers...we MIGHT need one of them.
-. /etc/functions
+. /etc/runit/functions
 
 # Check to see if we have config changes...
 [ -e /etc/default/ptpd ] && . /etc/default/ptpd
@@ -15,8 +15,8 @@
 # Check to see if we have the config file- no config, no start.  Tell the world and stop
 # ourselves...
 if [ ! -e $PTPD_CONFIG_FILE ] ; then
-    msg_error "ptpd -- Unable to find confg ($PTPD_CONFIG_FILE).  Stopping service."
-    sv stop ptpd
+    svc_log "ptp config ($PTPD_CONFIG_FILE) is not present.  Stopping service"
+    svc_stop
 fi
 
 # Launch the daemon...we've got everything.
