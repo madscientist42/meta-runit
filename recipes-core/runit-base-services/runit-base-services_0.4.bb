@@ -22,7 +22,6 @@ SRC_URI = " \
     file://functions \
     file://modules-load \
     file://shutdown \
-    file://svstats \
     file://rsm \
     file://csrc/CMakeLists.txt \
     file://csrc/halt.c \
