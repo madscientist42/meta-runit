@@ -85,7 +85,6 @@ install_runit_initscripts() {
     install -m 0755 ${WORKDIR}/modules-load ${D}/sbin
     install -m 0755 ${WORKDIR}/shutdown ${D}/sbin
     install -m 0755 ${WORKDIR}/rsm ${D}/sbin
-    install -m 0755 ${WORKDIR}/svstats ${D}/sbin
 
     # Put some stuff that was in ${D}/usr/sbin into ${D}/sbin because
     # it's easier to postprocess move them into the right place than
