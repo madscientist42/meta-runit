@@ -8,6 +8,8 @@ LIC_FILES_CHKSUM = "file://../COPYING;md5=91cc138cfd680c457be3678a29aaf4a3"
 RDEPENDS:${PN} = " \
     millisleep \
     coreutils \
+    psmisc \
+    ncurses \
     ${@bb.utils.contains('DISTRO_FEATURES', 'socklogd', 'socklogd', '', d)} \
     "
 
@@ -90,7 +92,8 @@ install_runit_initscripts() {
     # it's easier to postprocess move them into the right place than
     # to try to make the CMake do the "right things..."
     mv ${D}/usr/sbin/* ${D}/sbin
-    rm -rf ${D}/usr
+    rm -rf ${D}/usr    file://sv/bootchart/run \
+
 
     # Symlink a few things to one of the binaries that we just moved...
     ln -s /sbin/halt ${D}/sbin/poweroff

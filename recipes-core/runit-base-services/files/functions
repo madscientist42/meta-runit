@@ -1,7 +1,11 @@
 # *-*-shell-*-*
 
+# Basic meta-runit functionalities for providing core-services and service
+# features like emits to console, logs, etc.
+
 PATH=/bin:/usr/bin:/sbin:/usr/sbin
 
+# Provide basic colorized console output for feedback to console, etc.
 msg() {
     # bold
     printf "\033[1m=> $@\033[m\n"
@@ -27,6 +31,7 @@ msg_warn() {
     printf "\033[1m\033[33mWARNING: $@\033[m\n"
 }
 
+# Pop to a shell when things BREAK.
 emergency_shell() {
     echo
     echo "Cannot continue due to errors above, starting emergency shell."
@@ -68,16 +73,18 @@ get_svc_name() {
     echo $(basename $(dirname $(realpath $0)))
 }
 
+
+# Generate syslog entries for the svc in question.  Presume that
+# if we have a log user, we also have, at minimum, a syslog and logger
+# present to generate the event entry.  If you've got logger, though
+# it will not error out if the syslog daemon set is down, not there, etc.
 svc_log() {
-    # Generate syslog entries for the svc in question.  Presume that
-    # if we have a log user, we also have, at minimum, a syslog and logger
-    # present to generate the event entry.  If you've got logger, though
-    # it will not error out if the syslog daemon set is down, not there, etc.
     logger "$(get_svc_name) : $@"
 }
 
 # Handle a self-shutdown for a one-shot "service" that runs/tries to run ONCE and
-# then shuts itself down according to needs.
+# then shuts itself down according to needs, or when we fail in tests or similar
+# in the service execution.
 svc_stop() {
     # The 'basename' of the dirname of the realpath of the script calling this
     # should be the one that corresponds to the service's name, thereby doing
@@ -105,3 +112,5 @@ svc_reset_run_flag() {
     SVC_NAME=$(get_svc_name)
     [ -e /var/tmp/runit-svcs/$SVC_NAME ] && rm -f /var/tmp/runit-svcs/$SVC_NAME
 }
+
+# Now, let's trigger color setting for any given

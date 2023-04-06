@@ -4,7 +4,6 @@
 #
 # ORIGINAL Author: Dave Eddy <dave@daveeddy.com>
 # NEW Maintainer: Frank Earl <frank@earlconsult.com>
-#
 # Date: August 29, 2018
 # License: MIT
 
@@ -59,6 +58,11 @@ human() {
 setcolors() {
 	local opt=$1
 	local colors
+
+    # Handle situations where we're called without an option...
+    if [ -z "$opt" ] ; then
+        opt='auto'
+    fi
 
 	if [[ $opt == auto ]]; then
 		# no colors if stdout is not a TTY
@@ -121,7 +125,7 @@ $colorgreen Runit Service Manager ($RSM_VERSION)
 $colorgreen MIT License
 
 $logo   $colorblue Manage and view runit services
-$logo   $colorblue (Originally designed for Void, modified to support meta-runit, other...)
+$logo   $colorblue (Originally designed for Void, modified to support meta-runit, etc.)
 $logo   $colorblue ORIGINAL Author: Dave Eddy <dave@daveeddy.com> (bahamas10)
 $logo   $colorblue Current Maintainer: Frank Earl <frank@earlconsult.com> (madscientist42)
 
