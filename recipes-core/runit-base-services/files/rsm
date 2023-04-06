@@ -9,9 +9,9 @@
 
 RSM_VERSION='v1.3.6'
 
-export SVDIR=${SVDIR:-/var/service}
+export SVDIR=${SVDIR:-/service}
 
-charup='✔'
+charup='#'
 chardown='X'
 charunknown='?'
 progname=${0##*/}
@@ -91,7 +91,7 @@ setcolors() {
 			colorblue=$(tput setaf 4)
 			colormagenta=$(tput setaf 5)
 			colorcyan=$(tput setaf 6)
-			#colorwhite=$(tput setaf 7)
+			colorwhite=$(tput setaf 7)
 			colorgray=$(tput setaf 8)
 			colorbold=$(tput bold)
 			colorreset=$(tput sgr0)
@@ -102,7 +102,7 @@ setcolors() {
 			coloryellow=
 			colormagenta=
 			colorcyan=
-			#colorwhite=
+			colorwhite=
 			colorgray=
 			colorbold=
 			colorreset=
@@ -117,6 +117,7 @@ setcolors() {
 usage() {
 	local cr=$colorreset
 	local logo
+    install -m 0755 ${WORKDIR}/svstats ${D}/sbin
 
 	logo=$(getlogo)
 
@@ -136,7 +137,8 @@ $progname [-u] [-d <dir>] [-h] [-t] [SUBCOMMAND] [...]
 ${coloryellow}OPTIONS:${colorgreen}
 ${colorgreen}-c <yes|no|auto>         $cr Enable/disable color output, defaults to auto
 ${colorgreen}-d <dir>                 $cr Directory to look into, defaults to env SVDIR or /var/service if unset
-${colorgreen}-h                       $cr Print this message and exit
+${colorgreen}-h           install -m 0755 ${WORKDIR}/svstats ${D}/sbin
+                $cr Print this message and exit
 ${colorgreen}-l                       $cr Show log processes, this is a shortcut for 'status -l'
 ${colorgreen}-t                       $cr Tree view, this is a shortcut for 'status -t'
 ${colorgreen}-u                       $cr User mode, this is a shortcut for '-d ~/runit/service'
@@ -146,6 +148,7 @@ ${colorgreen}-V                       $cr Print the version number and exit
 ${coloryellow}ENV:${colorgreen}
 SVDIR                    $cr The directory to use, passed to the 'sv' command, can
                           be overridden with '-d <dir>'
+    install -m 0755 ${WORKDIR}/svstats ${D}/sbin
 
 ${coloryellow}SUBCOMMANDS:${colorgreen}
 status [-lt] [filter]    $cr Default subcommand, show process status
@@ -193,6 +196,7 @@ getlogo() {
 	    "$colorcyan" \
 	    "$colorreset"
 }
+    install -m 0755 ${WORKDIR}/svstats ${D}/sbin
 
 # prints a message
 msg() {
@@ -243,7 +247,7 @@ process_service() {
 
 	islog=false
 	if [[ $svc == */log ]]; then
-		islog=true
+		islog=true    install -m 0755 ${WORKDIR}/svstats ${D}/sbin
 	fi
 
 	# check permissions effectively
