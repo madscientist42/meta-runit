@@ -1,4 +1,3 @@
 #!/bin/sh
 sv start syslog || exit 1
 [ -e /sbin/klogd ] && exec /sbin/klogd -n 2>&1
-[ -e /usr/sbin/nanoklogd ] && exec /usr/sbin/nanoklogd 2>&1
