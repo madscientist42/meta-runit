@@ -11,8 +11,8 @@ RSM_VERSION='v1.3.6'
 
 export SVDIR=${SVDIR:-/service}
 
-charup='#'
-chardown='X'
+charup='+'
+chardown='-'
 charunknown='?'
 progname=${0##*/}
 num_re='^-?[0-9]+$'
