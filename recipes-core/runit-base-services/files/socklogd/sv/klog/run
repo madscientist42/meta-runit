@@ -1,4 +1,0 @@
-#!/bin/sh
-sv start syslog || exit 1
-exec chpst -u nobody:nogroup nanoklogd
-
