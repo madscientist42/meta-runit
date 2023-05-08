@@ -1,0 +1,4 @@
+#!/bin/sh
+# Check to see if messagebus (dbus) is up.  If not, BAIL.
+sv check messagebus || exit
+exec avahi-daemon -s 2>&1

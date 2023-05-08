@@ -6,11 +6,12 @@ inherit runit
 
 # Add to the SRC_URI for our runit, etc. piece parts...
 SRC_URI += " \
-    file://sv/avahi-demon/run \
+    file://sv/avahi-daemon/run \
     "
 
 # Specify that this service needs to be ran
 RUNIT-SERVICES = "DEFAULT"
+RUNIT_DEFAULT_MODS = "log"
 
 # Add any of our run entries to the respective package sets...
 FILES:avahi-daemon += " \
