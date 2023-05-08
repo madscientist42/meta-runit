@@ -49,7 +49,6 @@ SRC_URI = " \
     file://sv/syslog/run \
     file://sv/klog/run \
     file://socklogd/sv/syslog/run \
-    file://socklogd/sv/klog/run \
     "
 
 S = "${WORKDIR}/csrc"
