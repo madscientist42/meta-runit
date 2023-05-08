@@ -5,19 +5,28 @@
 [ -r /etc/default/config ] && . /etc/default/config
 
 # Handle a few potential problems with this runlevel.  connman controls
-# things like wpa_supplicant, ofono, etc., so we don't want runit 
+# things like wpa_supplicant, ofono, etc., so we don't want runit
 # services files for the others right now.  They cause weird problems
 # with scans, etc.
-SVC_LIST="wpa_supplicant hostapd ofono"
+SVC_LIST="wpa_supplicant iwd hostapd ofono"
 for SVC in $SVC_LIST; do
-    sv exit $SVC
-    sv force-stop $SVC
-    if [ ! -e /etc/sv/$SVC/down ]; then
-        touch /etc/sv/$SVC/down
+    # Check to make sure the service even is there...
+    if [ ! -e /etc/sv/$SVC ]; then
+        # Presume it is, now we need to check to see if it's started or not- if so, NUKE IT.
+        sv -w0 check $SVC
+        if [ $? -eq 0 ] ; then
+            # This would be up and running.  Shut it off.
+            sv exit $SVC
+            sv force-stop $SVC
+        fi
+        # Now, make sure we tag this one as DOWN for now.
+        if [ ! -e /etc/sv/$SVC/down ]; then
+            touch /etc/sv/$SVC/down
+        fi
     fi
 done
 
-# Check to see if we're mounted as an NFS root.  (Little different 
+# Check to see if we're mounted as an NFS root.  (A little different
 # set of operating rules if we are...)
 set -e
 nfsroot=0
@@ -42,20 +51,20 @@ if [ $nfsroot -eq 1 ]; then
     NET_ADDR=`cat /proc/cmdline | sed -ne 's/^.*ip=\([^ :]*\).*$/\1/p'`
 
     if [ ! -z "$NET_ADDR" ]; then
-	if [ "$NET_ADDR" = dhcp ]; then
-	    ethn=`ifconfig | grep "^eth" | sed -e "s/\(eth[0-9]\)\(.*\)/\1/"`
-	    if [ ! -z "$ethn" ]; then
-		EXTRA_PARAM="-I $ethn"
-	    fi
-	else
-	    for i in $NET_DEVS; do
-		ADDR=`ifconfig $i | sed 's/addr://g' | sed -ne 's/^.*inet \([0-9.]*\) .*$/\1/p'`
-		if [ "$NET_ADDR" = "$ADDR" ]; then
-		    EXTRA_PARAM="-I $i"
-		    break
-		fi
-	    done
-	fi
+        if [ "$NET_ADDR" = dhcp ]; then
+            ethn=`ifconfig | grep "^eth" | sed -e "s/\(eth[0-9]\)\(.*\)/\1/"`
+            if [ ! -z "$ethn" ]; then
+            EXTRA_PARAM="-I $ethn"
+            fi
+        else
+            for i in $NET_DEVS; do
+            ADDR=`ifconfig $i | sed 's/addr://g' | sed -ne 's/^.*inet \([0-9.]*\) .*$/\1/p'`
+            if [ "$NET_ADDR" = "$ADDR" ]; then
+                EXTRA_PARAM="-I $i"
+                break
+            fi
+            done
+        fi
     fi
 fi
 exec connmand --nodaemon $WIFI_PARAM $EXTRA_PARAM 2>&1
