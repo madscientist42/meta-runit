@@ -12,12 +12,16 @@ SVC_LIST="wpa_supplicant iwd hostapd ofono"
 for SVC in $SVC_LIST; do
     # Check to make sure the service even is there...
     if [ ! -e /etc/sv/$SVC ]; then
-        # Presume it is, now we need to check to see if it's started or not- if so, NUKE IT.
-        sv -w0 check $SVC
-        if [ $? -eq 0 ] ; then
-            # This would be up and running.  Shut it off.
-            sv exit $SVC
-            sv force-stop $SVC
+        if [ -e /etc/runit/runsvdir/default/$SVC ] ; then
+            # Presume it is, now we need to check to see if it's started or not- if so, NUKE IT.
+            sv -w0 check $SVC
+            if [ $? -eq 0 ] ; then
+                # This would be up and running.  Shut it off.
+                sv exit $SVC
+                sv force-stop $SVC
+            fi
+        else
+            echo "$SVC not configured..."
         fi
         # Now, make sure we tag this one as DOWN for now.
         if [ ! -e /etc/sv/$SVC/down ]; then
@@ -27,22 +31,10 @@ for SVC in $SVC_LIST; do
 done
 
 # Check to see if we're mounted as an NFS root.  (A little different
-# set of operating rules if we are...)
-set -e
-nfsroot=0
-exec 9<&0 < /proc/mounts
-while read dev mtpt fstype rest; do
-	if test $mtpt = "/" ; then
-		case $fstype in
-		    nfs | nfs4)
-			nfsroot=1
-			break
-			;;
-		    *)
-			;;
-		esac
-	fi
-done
+# set of operating rules if we are...)  We're going to get clever- the
+# prior way was...broken...on the case of running against the VisionFive2
+# RISC-V target, so, we're going to AWK our way through this.
+nfsroot=$(cat /proc/mounts|awk 'BEGIN{nfsroot=0} /nfs/{if($2 == "/") {nfsroot=1}} END{print nfsroot}')
 
 # Now setup and launch...
 EXTRA_PARAM=""
