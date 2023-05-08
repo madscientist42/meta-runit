@@ -117,8 +117,6 @@ setcolors() {
 usage() {
 	local cr=$colorreset
 	local logo
-    install -m 0755 ${WORKDIR}/svstats ${D}/sbin
-
 	logo=$(getlogo)
 
 	cat <<EOF
@@ -137,7 +135,7 @@ $progname [-u] [-d <dir>] [-h] [-t] [SUBCOMMAND] [...]
 ${coloryellow}OPTIONS:${colorgreen}
 ${colorgreen}-c <yes|no|auto>         $cr Enable/disable color output, defaults to auto
 ${colorgreen}-d <dir>                 $cr Directory to look into, defaults to env SVDIR or /var/service if unset
-${colorgreen}-h           install -m 0755 ${WORKDIR}/svstats ${D}/sbin
+${colorgreen}-h
                 $cr Print this message and exit
 ${colorgreen}-l                       $cr Show log processes, this is a shortcut for 'status -l'
 ${colorgreen}-t                       $cr Tree view, this is a shortcut for 'status -t'
@@ -148,8 +146,6 @@ ${colorgreen}-V                       $cr Print the version number and exit
 ${coloryellow}ENV:${colorgreen}
 SVDIR                    $cr The directory to use, passed to the 'sv' command, can
                           be overridden with '-d <dir>'
-    install -m 0755 ${WORKDIR}/svstats ${D}/sbin
-
 ${coloryellow}SUBCOMMANDS:${colorgreen}
 status [-lt] [filter]    $cr Default subcommand, show process status
 			 $cr '-t' enables tree mode (process tree)
@@ -196,7 +192,6 @@ getlogo() {
 	    "$colorcyan" \
 	    "$colorreset"
 }
-    install -m 0755 ${WORKDIR}/svstats ${D}/sbin
 
 # prints a message
 msg() {
@@ -247,7 +242,7 @@ process_service() {
 
 	islog=false
 	if [[ $svc == */log ]]; then
-		islog=true    install -m 0755 ${WORKDIR}/svstats ${D}/sbin
+		islog=true
 	fi
 
 	# check permissions effectively
