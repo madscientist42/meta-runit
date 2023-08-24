@@ -50,15 +50,24 @@ do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', 'inst
 # FIXME - This just blindly removes everything in the packaging for sysvinit and systemd stuff
 #         For now, this is, "fine," but needs to be revisited with "better".
 cleanup_sysvinit_dirs() {
-    rm -rf ${D}/etc/rc*.d
-    dirlist=`find ${D}/etc/ -type d -name 'init.d' -print`
-    for dir in $dirlist; do
-        rm -rf $dir
-    done
-    dirlist=`find ${D}/etc/ -name '*.service' -print`
-    for dir in $dirlist; do
-        rm -rf $dir
-    done
+    # We probably ought to go and check if there's an /etc here before doing this.
+    #
+    # Scripting presumes something not in evidence if you're building out something
+    # that has none of this (/etc even in ${D} at this point...) and this will blow
+    # up in your face...  Accounting for a fresh start without init/supervision.
+    #
+    # FCE (08/24/23)
+    if [ -e ${D}/etc ] ; then
+        rm -rf ${D}/etc/rc*.d
+        dirlist=`find ${D}/etc/ -type d -name 'init.d' -print`
+        for dir in $dirlist; do
+            rm -rf $dir
+        done
+        dirlist=`find ${D}/etc/ -name '*.service' -print`
+        for dir in $dirlist; do
+            rm -rf $dir
+        done
+    fi
 }
 DO_SYSVINIT_CLEANUP = "${@bb.utils.contains('DISTRO_FEATURES', 'sysvinit', '', 'cleanup_sysvinit_dirs', d)}"
 do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', '${DO_SYSVINIT_CLEANUP}', '', d)} "
@@ -86,7 +95,7 @@ enable_default_services() {
     cd ${D}${runit-svcdir}
     for svc in * ; do
         # Catch situations where we don't have ANY files (* comes back for the globbing which is broken for this.)
-        if [ ! -d "$svc" ] ; then 
+        if [ ! -d "$svc" ] ; then
             continue
         fi
 
