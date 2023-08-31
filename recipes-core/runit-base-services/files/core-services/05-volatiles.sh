@@ -55,7 +55,7 @@ apply_config() {
 	cat $1 | sed 's/#.*//g' | while read TTYPE TUSER TGROUP TMODE TNAME TLTARGET; do
         # Consider JUST the first character of the TTYPE variable...if it even is in the
         # the line we're processing.  If nothing's there?  Skip it.
-        if [ ! -z "$TTYPE"]; then
+        if [ ! -z "$TTYPE" ]; then
             case "$TTYPE" in
                 # File generation called for...
                 f*) create_file $TUSER $TGROUP $TMODE $TNAME $TLTARGET
