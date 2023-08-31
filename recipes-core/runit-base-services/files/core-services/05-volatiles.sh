@@ -52,7 +52,7 @@ do_symlink() {
 apply_config() {
     # Strip out comments...we allow shell-type comments in config files.  Process the
     # entries accordingly...
-	cat $1 | sed 's/#.*//g' | while read TTYPE TUSER TGROUP TMODE TNAME TLTARGET; do
+	cat $1 | sed '/^#/d' | while read TTYPE TUSER TGROUP TMODE TNAME TLTARGET; do
         # Consider JUST the first character of the TTYPE variable...if it even is in the
         # the line we're processing.  If nothing's there?  Skip it.
         if [ ! -z "$TTYPE" ]; then
