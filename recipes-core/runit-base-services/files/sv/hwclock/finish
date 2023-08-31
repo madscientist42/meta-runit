@@ -9,9 +9,9 @@
 [ -f /etc/default/hwclock ] && . /etc/default/hwclock
 
 if [ "$HWCLOCKACCESS" != no ] ; then
-	if [ "$VERBOSE" != no ] ; then
-		msg "Saving the System Clock time to the Hardware Clock..."
-	fi
+    # Have a HW RTC of some sort.  Operate on the thing accordingly.
+    # (This way GPS/NTP/PTP will set the system clock precisely and then
+    #  we start up with the roughly correct time at boot.)
 	hwclock $tz --systohc
 	if [ "$VERBOSE" != no ] ; then
 		msg "Hardware Clock updated to `date`."

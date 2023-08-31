@@ -8,8 +8,7 @@
 [ -f /etc/default/hwclock ] && . /etc/default/hwclock
 
 if [ "$VERBOSE" != no ] ; then
-        msg "System time was `date`."
-        msg "Setting the System Clock using the Hardware Clock as reference..."
+        msg "System time was `date`- setting time using RTC as reference..."
 fi
 
 if [ "$HWCLOCKACCESS" != no ] ; then

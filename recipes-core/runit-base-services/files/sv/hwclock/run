@@ -1,8 +1,7 @@
 #!/bin/sh
 
-# Set the wallclock off of the RTC on the system, if any...
-. /etc/runit/core-services/00-hwclock.sh
-
-# Pause so it leaves it ready to trigger on exit...
+# Pause so it leaves it ready to trigger on exit, letting us hook saving
+# of the system clock to the RTC on restart or down for this, "service,"
+# neatly handling the save under all contexts it'd need to be done.
 exec pause
 
