@@ -50,6 +50,12 @@ SRC_URI = " \
     file://socklogd/sv/syslog/run \
     "
 
+# Side-step a problem with this design regarding DTBOs that is currently
+# present with Xilinx systems.  If you're using their Kernel, the DTBO
+# load module/patch is a goofy thing that's their own idea there and doesn't
+# play nicely like the 6.x kernel version or the dtbocfg kernel module.
+SRC_URI:remove:xilinx = "file://core-services/02-dtbo-load.sh"
+
 S = "${WORKDIR}/csrc"
 
 # We're runit and additionally CMake as a recipe.  CMake's in
@@ -84,14 +90,16 @@ install_runit_initscripts() {
     install -m 0755 ${WORKDIR}/shutdown ${D}/sbin
     install -m 0755 ${WORKDIR}/rsm ${D}/sbin
 
+    # Now, install our core-services scripting...
+
     # Put some stuff that was in ${D}/usr/sbin into ${D}/sbin because
     # it's easier to postprocess move them into the right place than
     # to try to make the CMake do the "right things..."
     mv ${D}/usr/sbin/* ${D}/sbin
-    rm -rf ${D}/usr    file://sv/bootchart/run \
-
+    rm -rf ${D}/usr
 
     # Symlink a few things to one of the binaries that we just moved...
+    # It's a multicall dispatch much like busybox is...
     ln -s /sbin/halt ${D}/sbin/poweroff
     ln -s /sbin/halt ${D}/sbin/reboot
 }
