@@ -19,13 +19,14 @@ for SVC in $SVC_LIST; do
                 # This would be up and running.  Shut it off.
                 sv exit $SVC
                 sv force-stop $SVC
+
+                # Now, make sure we tag this one as DOWN for now.
+                if [ ! -e /etc/sv/$SVC/down ]; then
+                    touch /etc/sv/$SVC/down
+                fi
             fi
         else
             echo "$SVC not configured..."
-        fi
-        # Now, make sure we tag this one as DOWN for now.
-        if [ ! -e /etc/sv/$SVC/down ]; then
-            touch /etc/sv/$SVC/down
         fi
     fi
 done
