@@ -33,7 +33,15 @@ if [ -e $CONFIGFS_DIR -a -e /etc/dtbo ] ; then
         for dtbo in /etc/dtbo/* ; do
             dtbo_name=`basename $dtbo`
             mkdir $dtbo_name
-            cp $dtbo $dtbo_name/dtbo
+            # Check to see if we're using a Xilinx version of things or not.
+            if [ ! -e $dtbo_name/path ] ; then
+                # Nope.  Use the normal method which is to load the DTBO into
+                # the sysfs edge via a cp call into it.
+                cp $dtbo $dtbo_name/dtbo
+            else
+                # Xilinx.  Set the path instead.
+                echo $dtbo > $dtbo_name/path
+            fi
             echo 1 > $dtbo_name/status
         done
 

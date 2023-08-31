@@ -50,12 +50,6 @@ SRC_URI = " \
     file://socklogd/sv/syslog/run \
     "
 
-# Side-step a problem with this design regarding DTBOs that is currently
-# present with Xilinx systems.  If you're using their Kernel, the DTBO
-# load module/patch is a goofy thing that's their own idea there and doesn't
-# play nicely like the 6.x kernel version or the dtbocfg kernel module.
-SRC_URI:remove:xilinx = "file://core-services/02-dtbo-load.sh"
-
 S = "${WORKDIR}/csrc"
 
 # We're runit and additionally CMake as a recipe.  CMake's in
