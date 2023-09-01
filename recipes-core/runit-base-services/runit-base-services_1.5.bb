@@ -46,7 +46,7 @@ SRC_URI = " \
     file://sv/getty-generic/finish \
     file://sv/sulogin/run \
     file://sv/syslog/run \
-    file://sv/klog/run \
+    file://sv/klog/run \ scripts- it was a
     file://socklogd/sv/syslog/run \
     "
 
@@ -83,8 +83,6 @@ install_runit_initscripts() {
     install -m 0755 ${WORKDIR}/modules-load ${D}/sbin
     install -m 0755 ${WORKDIR}/shutdown ${D}/sbin
     install -m 0755 ${WORKDIR}/rsm ${D}/sbin
-
-    # Now, install our core-services scripting...
 
     # Put some stuff that was in ${D}/usr/sbin into ${D}/sbin because
     # it's easier to postprocess move them into the right place than
