@@ -46,7 +46,7 @@ SRC_URI = " \
     file://sv/getty-generic/finish \
     file://sv/sulogin/run \
     file://sv/syslog/run \
-    file://sv/klog/run \ scripts- it was a
+    file://sv/klog/run \
     file://socklogd/sv/syslog/run \
     "
 
