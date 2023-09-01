@@ -3,8 +3,8 @@
 # This is an intent to tidy up the volatiles support in meta-runit derived
 # systems.  It aims to simplify the script and make it a lot less noisy
 # as the original was kind-of, sort-of needed and yet NOT so.  It was cribbed
-# from out of Yocto's original noisy (..and NASTY...) sysvinit scripts- it was a
-# make-do that went for entirely too long.    FCE (08-30-2023)
+# from out of Yocto's original noisy (..and NASTY...very confusing...) sysvinit
+# scripts- it was a make-do that went for entirely too long.    FCE (08-30-2023)
 
 CONFIGS_DIR="/etc/default/volatiles"
 
@@ -51,11 +51,17 @@ do_symlink() {
 # any recipe or .bbappend accordingly.
 apply_config() {
     # Strip out comments...we allow shell-type comments in config files.  Process the
-    # entries accordingly...
+    # entries accordingly...  Worth note, you need to have clear line-feeds in your file
+    # or this MIGHT leave an entry in a config on the floor.
 	cat $1 | sed 's:#.*$::g' | while read TTYPE TUSER TGROUP TMODE TNAME TLTARGET; do
         # Consider JUST the first character of the TTYPE variable...if it even is in the
         # the line we're processing.  If nothing's there?  Skip it.
         if [ ! -z "$TTYPE" ]; then
+            # Emit what we're expected to be generating...this way there's
+            # a bit of feedback...
+            msg "        $TTYPE $TUSER $TGROUP $TMODE $TNAME $TLTARGET"
+
+            # Then DO it.
             case "$TTYPE" in
                 # File generation called for...
                 f*) create_file $TUSER $TGROUP $TMODE $TNAME $TLTARGET
@@ -83,6 +89,7 @@ apply_config() {
 if [ -e $CONFIGS_DIR ] ; then
     msg "Found volatiles config directory, processing."
     for CONFIG_FILE in $CONFIGS_DIR/*; do
+        msg "    $CONFIG_FILE"
         apply_config $CONFIG_FILE
     done
 fi
