@@ -113,4 +113,20 @@ svc_reset_run_flag() {
     [ -e /var/tmp/runit-svcs/$SVC_NAME ] && rm -f /var/tmp/runit-svcs/$SVC_NAME
 }
 
-# Now, let's trigger color setting for any given
+# Sidestep potential problems for check/status- it's not returning claimed
+# values in runit itself.  Will fix eventually either by re-documenting
+# in the wiki or fix the return value to MATCH what is claimed.  So, it's
+# not working.  This kind of requires the service in question needing this
+# to source the functions.  The grep returns the check result as up or not
+# running...  We also want it to emit so we have the reason why the service
+# didn't start when it should've.  Basically like 'sv check' is supposed
+# to work.
+svc_running() {
+    RETV=0
+    for SVC in '$@' ; do
+        CHK=`sv check $SVC`
+        echo $CHK
+        echo $CHK | grep -q 'run:' || RETV=1
+    done
+    return $RETV
+}

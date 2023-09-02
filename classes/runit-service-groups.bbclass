@@ -3,7 +3,7 @@
 inherit runit
 
 def preprocess_default_svcs(d):
-    # Handle figuring out what we have in our defaults list...  This is simple as 
+    # Handle figuring out what we have in our defaults list...  This is simple as
     # grabbing each basename of the path where there's a run...
     for root, dirs, files in os.walk(d.expand("${D}${runit-svcdir}/")) :
         if dirs :
@@ -14,7 +14,7 @@ def preprocess_default_svcs(d):
 
 
 def generate_services_entry(d, svc_group, prior, svcs_list):
-    import stat 
+    import stat
 
     # Just generate a run/finish/config/check that leverages this list when we have
     # a list.  We need to build a list of the stuff for a similar run through
@@ -32,9 +32,10 @@ def generate_services_entry(d, svc_group, prior, svcs_list):
     # (We want a start up to begin once we've done the launch of the prior
     # when applicable...), so the run needs to -e the shebang.
     print("#!/bin/sh -e", file=runfile)
+    print(". /etc/runit/functions", file=runfile)
     print(". ./svcs-list", file=runfile)
     if prior != 0:
-        print("sv -w2 check " + packagename + "-" + str(prior), file=runfile)
+        print("svc_running " + packagename + "-" + str(prior), file=runfile)
     print("sv start $SVCS_LIST", file=runfile)
     print("exec pause", file=runfile)
     runfile.close()
@@ -42,15 +43,16 @@ def generate_services_entry(d, svc_group, prior, svcs_list):
     os.chmod(filepath + "/run", stat.S_IRWXU | stat.S_IRGRP)
     checkfile = open(filepath + "/check", "wt")
     print("#!/bin/sh", file=checkfile)
+    print(". /etc/runit/functions", file=checkfile)
     print(". ./svcs-list", file=checkfile)
-    print("sv -w0 check $SVCS_LIST > /dev/null", file=checkfile)
+    print("svc_running $SVCS_LIST > /dev/null", file=checkfile)
     checkfile.close()
     # Make sure the check is executable...
     os.chmod(filepath + "/check", stat.S_IRWXU | stat.S_IRGRP )
-    # Handle closing down services semi-gracefully.  We issue a SIGUSR1 to 
+    # Handle closing down services semi-gracefully.  We issue a SIGUSR1 to
     # services needing to be told that they're being shut down (Some cases
-    # of some services need to wind down over a bit longer time than is 
-    # afforded by SIGTERM/SIGKILL/etc.) we then wait a small amount and 
+    # of some services need to wind down over a bit longer time than is
+    # afforded by SIGTERM/SIGKILL/etc.) we then wait a small amount and
     # then just shut down.
     finishfile = open(filepath + "/finish", "wt")
     print("#!/bin/sh", file=finishfile)
@@ -59,7 +61,7 @@ def generate_services_entry(d, svc_group, prior, svcs_list):
     print("sv 1 $SVCS_LIST", file=finishfile)
     print("sleep 2", file=finishfile)
     print("sv stop $SVCS_LIST", file=finishfile)
-    finishfile.close()    
+    finishfile.close()
     # Make sure the finish is executable...
     os.chmod(filepath + "/finish", stat.S_IRWXU | stat.S_IRGRP)
     # Now symlink the whole there to let runit know about it all.
@@ -69,11 +71,11 @@ def generate_services_entry(d, svc_group, prior, svcs_list):
 # For the specified grouping(s), generate a launcher that turns on those specified
 # services (Presuming the declared/defined service launchers are down-ed).  We capture
 # any services specified so we can remove them, ultimately, from a default list (Specified
-# in the NUM_SVC_GROUPS but doesn't have an entry.  Presume any of the remaining in 
-# THIS recipe as a final installed is the empty groups' list where this is 0 or more 
+# in the NUM_SVC_GROUPS but doesn't have an entry.  Presume any of the remaining in
+# THIS recipe as a final installed is the empty groups' list where this is 0 or more
 # groups as specified..
 python process_service_group_entries() {
-    import re 
+    import re
 
     # Check to see if we even have groupings declared...
     num_groups = d.getVar("NUM_SVC_GROUPS")
@@ -113,7 +115,7 @@ python process_service_group_entries() {
                     svcpath = d.expand("${D}${runit-svcdir}/") + sv
                     os.system("mkdir -p " + svcpath)
                     os.system("touch " + svcpath + "/down")
-                    
+
                     # Remove the defaults entry, if any for this service...
                     if default_svc_grp.count(sv) > 0:
                         default_svc_grp.remove(sv)
@@ -121,7 +123,7 @@ python process_service_group_entries() {
 
         # Handle the defaults that remain out of the default entries list we
         # initially generated at the beginning of this and winnowed out
-        # the stuff from each of the services groupings.  We have a max of 998 
+        # the stuff from each of the services groupings.  We have a max of 998
         # possible services groups.  999 is the final bucket; if we don't have
         # anything in the defaults bucket, do nada.
         if default_svc_grp :
