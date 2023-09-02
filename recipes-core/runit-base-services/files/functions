@@ -123,7 +123,7 @@ svc_reset_run_flag() {
 # to work.
 svc_running() {
     RETV=0
-    for SVC in '$@' ; do
+    for SVC in "$@" ; do
         CHK=`sv check $SVC`
         echo $CHK
         echo $CHK | grep -q 'run:' || RETV=1
