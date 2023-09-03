@@ -1,6 +1,6 @@
 #!/bin/sh
 [ -r /etc/default/gpsd ] && . /etc/default/gpsd
-[ -z "GPSD_SOCKET" ] && GPSD_SOCKET="/run/gpsd.sock"
-[ -z "GPSD_DEVICES"] && GPSD_DEVICES="/dev/gps0"
+[ -z "SOCKET" ] && SOCKET="/run/gpsd.sock"
+[ -z "DEVICES"] && DEVICES="/dev/gps0"
 exec /usr/sbin/gpsd -N -F $GPSD_SOCKET $OPTS ${GPSD_DEVICES}
 
