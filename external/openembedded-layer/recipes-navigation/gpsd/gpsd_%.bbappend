@@ -28,7 +28,7 @@ DEFAULTS_FILE ?= "${D}/etc/default/gpsd.default"
 regenerate_defaults() {
     # Get the basics out of the way...
     echo "SOCKET=\"${GPSD_SOCKET}\"" > ${DEFAULTS_FILE}
-    echo "DEVICES=\"${GPS_DEVICES}\"" >> ${DEFAULTS_FILE}
+    echo "DEVICES=\"${GPSD_DEVICES}\"" >> ${DEFAULTS_FILE}
 
     # Build out the options for things like speed and port which are very
     # specific command line options for serial port or TCP/UDP providers.
