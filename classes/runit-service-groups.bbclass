@@ -2,6 +2,11 @@
 # Inherit runit if we didn't already to ensure it's there- this only works with runit anyhow...
 inherit runit
 
+# Handle the condition that we're just stuffing out control hooks for a bunch of other
+# services instead of one where we're doing in a bunch of run files (i.e. handle both of
+# the valid use-cases of this .bbclass correctly...)
+DEFAULT_SVC_GROUP ?= ""
+
 def preprocess_default_svcs(d):
     # Handle figuring out what we have in our defaults list...  This is simple as
     # grabbing each basename of the path where there's a run...
@@ -76,6 +81,13 @@ def generate_services_entry(d, svc_group, prior, svcs_list):
 # groups as specified..
 python process_service_group_entries() {
     import re
+
+    # Check to see if we have an installed playground from the runit.bbclass install engine or not.
+    # (If this is just specifying groupings for other recipes, there won't be any ${D}/etc/sv directory,
+    #  which is a problem if you don't do this bit of extra at the start of this processing...)
+    install_dir = d.expand("${D}${runit-svcdir}")
+    if not os.path.isdir(install_dir):
+        os.makedirs(install_dir)
 
     # Check to see if we even have groupings declared...
     num_groups = d.getVar("NUM_SVC_GROUPS")
