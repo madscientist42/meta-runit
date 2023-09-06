@@ -36,9 +36,9 @@ install_runit_services() {
         # Ensure we've got a proper services directory in the packaging...
         install -d ${D}${runit-svcdir}
         cp -rap --no-preserve=ownership ${WORKDIR}/sv/* ${D}${runit-svcdir}
-        chmod u+x ${D}${runit-svcdir}/*/run
-        chmod u+x ${D}${runit-svcdir}/*/finish
-        chmod u+x ${D}${runit-svcdir}/*/check
+        find ${D}${runit-svcdir} -name run -exec chmod u+x {} \; || true
+        find ${D}${runit-svcdir} -name finish -exec chmod u+x {} \; || true
+        find ${D}${runit-svcdir} -name check -exec chmod u+x {} \; || true
     fi
 }
 do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', 'install_runit_services', '', d)} "
