@@ -37,6 +37,8 @@ install_runit_services() {
         install -d ${D}${runit-svcdir}
         cp -rap --no-preserve=ownership ${WORKDIR}/sv/* ${D}${runit-svcdir}
         chmod u+x ${D}${runit-svcdir}/*/run
+        chmod u+x ${D}${runit-svcdir}/*/finish
+        chmod u+x ${D}${runit-svcdir}/*/check
     fi
 }
 do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', 'install_runit_services', '', d)} "
