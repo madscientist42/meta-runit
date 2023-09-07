@@ -38,11 +38,12 @@ if [ -e $CONFIGFS_DIR -a -e /etc/dtbo ] ; then
                 # Nope.  Use the normal method which is to load the DTBO into
                 # the sysfs edge via a cp call into it.
                 cp $dtbo $dtbo_name/dtbo
+                # Need to turn things on...xilinx is applied the moment the cat finishes.
+                echo 1 > $dtbo_name/status
             else
-                # Xilinx.  Set the path instead.
-                echo $dtbo > $dtbo_name/path
+                # Xilinx.  cat it in redirected- little different than copy and works cleaner for it.
+                cat $dtbo > $dtbo_name/dtbo
             fi
-            echo 1 > $dtbo_name/status
         done
 
         msg_done "Loaded overlays"
