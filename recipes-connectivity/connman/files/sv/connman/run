@@ -2,7 +2,7 @@
 
 # Check to see if we've got any special rules other than the stuff
 # below for NFS roots to handle and bring them in...
-[ -r /etc/default/config ] && . /etc/default/config
+[ -r /etc/default/connman ] && . /etc/default/connnman
 
 # Handle a few potential problems with this runlevel.  connman controls
 # things like wpa_supplicant, ofono, etc., so we don't want runit
@@ -60,7 +60,7 @@ if [ $nfsroot -eq 1 ]; then
         fi
     fi
 fi
-exec connmand --nodaemon $WIFI_PARAM $EXTRA_PARAM 2>&1
+exec connmand --nodaemon $CONFIG_PARAM $WIFI_PARAM $EXTRA_PARAM 2>&1
 
 
 
