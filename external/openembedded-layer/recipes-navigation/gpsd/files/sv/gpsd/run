@@ -2,5 +2,5 @@
 [ -r /etc/default/gpsd ] && . /etc/default/gpsd
 [ -z "SOCKET" ] && SOCKET="/run/gpsd.sock"
 [ -z "DEVICES" ] && DEVICES="/dev/gps0"
-exec /usr/sbin/gpsd -N -F $SOCKET $OPTS ${DEVICES}
+exec /usr/sbin/gpsd -N -F $SOCKET $OPTIONS ${DEVICES}
 

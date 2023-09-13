@@ -4,6 +4,10 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 # Next, make it a runit capable package...
 inherit runit
 
+# This is an annex of the original code.  So, if you modify this file, bump
+# the number in this .bbappend to reflect the change and force a re-build.
+PR =. "+runit-r1"
+
 # Add the services set(s) we're supplying...
 SRC_URI += " \
     file://sv/gpsd/run \
