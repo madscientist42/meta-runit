@@ -3,6 +3,10 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 WIFI_MANAGER = "${@bb.utils.contains('DISTRO_FEATURES', 'iwd', 'iwd', 'wpa-supplicant',d)}"
 
+# Add a PR component for our contributions to this recipe.  If you change the guts in
+# the .bbappend, bump the number here...
+PR =. "+runit-r1"
+
 # Add the services set(s)...
 SRC_URI += " \
     file://sv/connman/run \
@@ -17,7 +21,7 @@ inherit runit
 RUNIT-SERVICES = "DEFAULT"
 RUNIT_DEFAULT_MODS = "log"
 
-# One last thing, set up the gear-shifted config file so we can use 
+# One last thing, set up the gear-shifted config file so we can use
 # the right and desired wireless, etc. manager entries for our daemon...
 copy_connman_config(){
     install -m 0644 ${WORKDIR}/${WIFI_MANAGER}.config ${D}${sysconfdir}/sv/connman/config
