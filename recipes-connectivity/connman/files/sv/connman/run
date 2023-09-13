@@ -1,8 +1,12 @@
 #!/bin/sh
 
 # Check to see if we've got any special rules other than the stuff
-# below for NFS roots to handle and bring them in...
+# below for NFS roots to handle and bring them in...  This lives in
+# two places.  One's in the /etc/defaults place, the other lives
+# in here with this run as a provisioned, which WiFi management
+# engine are we running with...
 [ -r /etc/default/connman ] && . /etc/default/connnman
+[ -r ./config ] && . ./config
 
 # Handle a few potential problems with this runlevel.  connman controls
 # things like wpa_supplicant, ofono, etc., so we don't want runit
