@@ -5,7 +5,7 @@ WIFI_MANAGER = "${@bb.utils.contains('DISTRO_FEATURES', 'iwd', 'iwd', 'wpa-suppl
 
 # Add a PR component for our contributions to this recipe.  If you change the guts in
 # the .bbappend, bump the number here...
-PR =. "+runit-r2"
+PR =. "+runit-r3"
 
 # Add the services set(s)...
 SRC_URI += " \

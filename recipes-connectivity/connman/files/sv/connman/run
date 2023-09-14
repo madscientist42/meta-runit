@@ -1,11 +1,13 @@
 #!/bin/sh
 
+. /etc/runit/functions
+
 # Check to see if we've got any special rules other than the stuff
 # below for NFS roots to handle and bring them in...  This lives in
 # two places.  One's in the /etc/defaults place, the other lives
 # in here with this run as a provisioned, which WiFi management
 # engine are we running with...
-[ -r /etc/default/connman ] && . /etc/default/connnman
+[ -r /etc/default/connman ] && . /etc/default/connman
 [ -r ./config ] && . ./config
 
 # Handle a few potential problems with this runlevel.  connman controls
@@ -16,21 +18,17 @@ SVC_LIST="wpa_supplicant iwd hostapd ofono"
 for SVC in $SVC_LIST; do
     # Check to make sure the service even is there...
     if [ ! -e /etc/sv/$SVC ]; then
-        if [ -e /etc/runit/runsvdir/default/$SVC ] ; then
-            # Presume it is, now we need to check to see if it's started or not- if so, NUKE IT.
-            sv -w0 check $SVC
-            if [ $? -eq 0 ] ; then
-                # This would be up and running.  Shut it off.
-                sv exit $SVC
-                sv force-stop $SVC
+        # Presume it is, now we need to check to see if it's started or not- if so, NUKE IT.
+        svc_running $SVC 2>&1 > /dev/null
+        if [ $? -eq 0 ] ; then
+            # This would be up and running.  Shut it off.
+            sv exit $SVC
+            sv force-stop $SVC
 
-                # Now, make sure we tag this one as DOWN for now.
-                if [ ! -e /etc/sv/$SVC/down ]; then
-                    touch /etc/sv/$SVC/down
-                fi
+            # Now, make sure we tag this one as DOWN for now.
+            if [ ! -e /etc/sv/$SVC/down ]; then
+                touch /etc/sv/$SVC/down
             fi
-        else
-            echo "$SVC not configured..."
         fi
     fi
 done
