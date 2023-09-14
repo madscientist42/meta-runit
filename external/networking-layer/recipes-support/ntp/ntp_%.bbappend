@@ -8,6 +8,10 @@
 # or wherever you're extending the path search to.
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
+# This is an annex of the original metadata.  So, if you modify this file, bump
+# the number in this .bbappend to reflect the change and force a re-build.
+PR =. "+runit-r1"
+
 # Add the services sets we provide for this to be a runit based package set...
 SRC_URI += " \
     file://sv/isc-ntpd/run \
