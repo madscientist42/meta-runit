@@ -1,0 +1,2 @@
+#!/bin/sh
+netstat -af 2>&1 | grep -q "udev/control"
