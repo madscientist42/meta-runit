@@ -1,2 +1,2 @@
 #!/bin/sh
-netstat -af 2>&1 | grep -q "udev/control"
+netstat -nlp 2>&1 | grep -q "udevd"

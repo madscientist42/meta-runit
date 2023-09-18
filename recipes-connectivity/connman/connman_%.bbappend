@@ -10,6 +10,7 @@ PR =. "+runit-r3"
 # Add the services set(s)...
 SRC_URI += " \
     file://sv/connman/run \
+    file://sv/connman/check \
     file://sv/connman/finish \
     file://${WIFI_MANAGER}.config \
     "
