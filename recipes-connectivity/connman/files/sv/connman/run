@@ -1,7 +1,5 @@
 #!/bin/sh
 
-. /etc/runit/functions
-
 # Check to see if we've got any special rules other than the stuff
 # below for NFS roots to handle and bring them in...  This lives in
 # two places.  One's in the /etc/defaults place, the other lives
