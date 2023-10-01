@@ -122,11 +122,40 @@ svc_reset_run_flag() {
 # didn't start when it should've.  Basically like 'sv check' is supposed
 # to work.
 svc_running() {
-    RETV=0
-    for SVC in "$@" ; do
-        CHK=`sv check $SVC`
-        echo $CHK
-        echo $CHK | grep -q 'run:' || RETV=1
+    RETV=1
+    TIMEOUT=7
+    # Nab the -w and the next param first if they're there...
+    if [ "$1" == "-w" ] ; then
+        # Next value presumed to be a timeout in seconds for the whole
+        # checking algorithm.
+        TIMEOUT=$2
+        # Take the two off the param list...
+        shift
+        shift
+    fi
+    # Now, do the check process.  We check every 100 msec for the duration
+    # of seconds that we're doing the check for...  When this gets fixed, it
+    # should collapse to just calling 'sv -w $TIMEOUT check $@' for this
+    # loopy junk that only largely works.
+    for count in $(seq 0 $TIMEOUT) ; do
+        for sleep in {1..10}; do
+            CHK=`sv -w 0 check "$@"`
+            echo $CHK | grep -q 'down:'
+            if [ $? -eq 0 ] ; then
+                millisleep 100
+            else
+                # No "down" showing in the check list...it's UP.
+                RETV=0
+                break
+            fi
+        done
+        if [ $RETV -eq 0 ] ; then
+            # We're UP.
+            break
+        else
+            # Part of the check here is down- report the result.
+            echo $CHK
+        fi
     done
     return $RETV
 }
