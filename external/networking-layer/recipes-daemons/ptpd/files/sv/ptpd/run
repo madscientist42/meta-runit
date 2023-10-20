@@ -2,7 +2,8 @@
 
 # We want to wait to 'syslog' being "up" before starting this- so we can get
 # feedback on a fail of config, etc.
-sv check syslog
+. /etc/runit/functions
+svc_running syslog
 
 # Pick up our core-services/run files helpers...we MIGHT need one of them.
 . /etc/runit/functions

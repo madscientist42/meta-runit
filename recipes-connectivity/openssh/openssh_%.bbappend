@@ -8,6 +8,7 @@ PR =. "+runit-r1"
 # Add the services set(s)...
 SRC_URI += " \
     file://sv/sshd/run \
+    file://sv/sshd/check \
     "
 
 # Next, make it a runit capable package...

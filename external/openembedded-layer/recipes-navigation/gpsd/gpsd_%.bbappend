@@ -11,6 +11,7 @@ PR =. "+runit-r1"
 # Add the services set(s) we're supplying...
 SRC_URI += " \
     file://sv/gpsd/run \
+    file://sv/gpsd/check \
     "
 
 # Some default parameters for the defaults re-generation engine below...
