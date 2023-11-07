@@ -10,13 +10,28 @@ CONFIGS_DIR="/etc/default/volatiles"
 
 # Call order : USER GROUP PERMS FILE (SOURCE)
 create_file() {
-    # Check to see if the name exists...if so, wipe it
-    [ -e $4 ] && rm -rf $4
+    # Check for presence.  Links and directories get nuked, files
+    # cause us to skip this operation.
+    if [ -d $4 ] ; then
+        rm -rf $4
+    elif [ -L $4 ] ; then
+        rm -f $4
+    elif [ -f $4 ] ; then 
+        return
+    fi
 
-    # First, make or copy the content to it's location...copy when we have something other than, "none"
-    # in the final column of the config...
-	[ "$5" = "none" ] && touch '$4' || cp $5 $4
-    [ $? -eq 0 ] || msg_error "Unable to create $1" && return
+    # First, make or copy the content to it's location...copy when we have 
+    # something other than, "none" in the final column of the config...  
+    # If it can't do this, there's either a problem with the permissions
+    # or presence of the file or dest path.  We use the more formal
+    # if/else/fi construct here because the truncated behavior doesn't
+    # work right in failure modes with it.
+	if [ "$5" = "none" ] ; then 
+        touch $4
+    else 
+        cp $5 $4
+    fi
+    [ $? -eq 0 ] || msg_error "Unable to create $4" && return
 
     # Now, set ownership and permissions accordingly...not a failure
     # per se, but needs to be flagged as warnings...
@@ -26,8 +41,15 @@ create_file() {
 
 # Call order : USER GROUP PERMS DIR
 make_dir() {
-    # Check to see if the name exists...if so, wipe it.
-    [ -e $4 ] && rm -rf $4
+    # Check for presence.  Links and files get nuked, directories
+    # cause us to skip this operation.
+    if [ -f $4 ] ; then
+        rm -f $4
+    elif [ -L $4 ] ; then
+        rm -f $4
+    elif [ -d $4 ] ; then
+        return
+    fi
 
     # Attempt to make the directory...
     mkdir -p $4 || msg_error "Unable to mkdir $4" && return
@@ -40,10 +62,18 @@ make_dir() {
 
 # Call order : DEST SOURCE
 do_symlink() {
-    # Presume an -f for symlinks.  They are to be done as commanded
-    # by the config files. ALWAYS.  Don't do anything fancy- it's not
-    # needed.
-    ln -sf $2 $1 || msg_error "Unable to link $2 to $1" && return
+    # Check for presence.  directories and files get nuked, links
+    # cause us to skip this operation.
+    if [ -d $1 ] ; then
+        rm -rf $1
+    elif [ -f $1 ] ; then
+        rm -f $1
+    elif [ -L $1 ] ; then
+        return
+    fi
+
+    # Now pour a link in.
+    ln -s $2 $1 || msg_error "Unable to link $2 to $1" && return
 }
 
 # Dogsbody for the config file processing.  Main loop of the script
