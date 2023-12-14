@@ -32,10 +32,10 @@ SRC_URI = " \
     file://core-services/00-pseudofs.sh \
     file://core-services/01-kmods.sh\
     file://core-services/01-static-devnodes.sh \
-    file://core-services/02-dtbo-load.sh \
     file://core-services/02-udev.sh \
     file://core-services/04-filesystems.sh \
     file://core-services/04-swap.sh \
+    file://core-services/04-system-dtbo-load.sh \
     file://core-services/05-misc.sh \
     file://core-services/05-volatiles.sh \
     file://core-services/06-postinsts.sh \
