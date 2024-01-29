@@ -57,6 +57,14 @@ S = "${WORKDIR}/csrc"
 # that we need for proper function of our base services set.
 inherit runit cmake
 
+# Make the recipe insensitive to where it needs to be dropped
+# in terms of the rootfs.  /sbin for "normal" mode, /usr/sbin
+# if "usrmerge" is specified for the distro config.  This makes
+# it quite a bit cleaner than previous.
+EXTRA_OECMAKE += " \
+    -DCMAKE_INSTALL_SBINDIR='${sbindir}' \
+    "
+
 # We want some of the services to be template ones (Like the getty-generic one...)
 # so, we'll be enabling the services selectively here.  It should be noted that
 # we're making a bit of a gearshift if you have socklogd set as a distro feature.
@@ -74,26 +82,20 @@ install_runit_initscripts() {
     install -d -m 0755 ${D}/etc/default/volatiles
 	install -d -m 0755 ${D}/etc/runit
 	install -d -m 0755 ${D}/etc/runit/core-services
-    install -d -m 0755 ${D}/sbin
+    install -d -m 0755 ${D}${sbindir}
     install -m 0644 ${WORKDIR}/00-volatiles ${D}/etc/default/volatiles
 	install -m 0755 ${WORKDIR}/1 ${D}/etc/runit
 	install -m 0755 ${WORKDIR}/2 ${D}/etc/runit
 	install -m 0755 ${WORKDIR}/3 ${D}/etc/runit
     install -m 0755 ${WORKDIR}/functions ${D}/etc/runit
-    install -m 0755 ${WORKDIR}/modules-load ${D}/sbin
-    install -m 0755 ${WORKDIR}/shutdown ${D}/sbin
-    install -m 0755 ${WORKDIR}/rsm ${D}/sbin
-
-    # Put some stuff that was in ${D}/usr/sbin into ${D}/sbin because
-    # it's easier to postprocess move them into the right place than
-    # to try to make the CMake do the "right things..."
-    mv ${D}/usr/sbin/* ${D}/sbin
-    rm -rf ${D}/usr
+    install -m 0755 ${WORKDIR}/modules-load ${D}${sbindir}
+    install -m 0755 ${WORKDIR}/shutdown ${D}${sbindir}
+    install -m 0755 ${WORKDIR}/rsm ${D}${sbindir}
 
     # Symlink a few things to one of the binaries that we just moved...
     # It's a multicall dispatch much like busybox is...
-    ln -s /sbin/halt ${D}/sbin/poweroff
-    ln -s /sbin/halt ${D}/sbin/reboot
+    ln -s ${sbindir}/halt ${D}${sbindir}/poweroff
+    ln -s ${sbindir}/halt ${D}${sbindir}/reboot
 }
 do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', 'install_runit_initscripts', '', d)} "
 

@@ -22,6 +22,15 @@ RDEPENDS:${PN} += "runit-base-services"
 
 inherit cmake
 
+# Make the recipe insensitive to where it needs to be dropped
+# in terms of the rootfs.  /sbin for "normal" mode, /usr/sbin
+# if "usrmerge" is specified for the distro config.  This makes
+# it quite a bit cleaner than previous.
+EXTRA_OECMAKE += " \
+    -DCMAKE_INSTALL_SBINDIR='${sbindir}' \
+    "
+
+
 # Make our lives a bit easier.  While the install works RIGHT for CMake for the packaging, we
 # want a bit of init-scripting legerdemain installed up-front as a part of this package (We
 # want/need, to make our lives easier, to establish the /etc/runit/runsvdir directory structure
@@ -40,7 +49,7 @@ FILES:${PN} += "/service"
 # Do some additional OpenEmbedded specific tasks for install if we're told we're using runit-init as init.
 do_runit_init_as_init() {
 	# Tie to init, so we run instead of busybox or sysvinit
-    install -d ${D}/sbin
-	ln -s /usr/sbin/runit ${D}/sbin/init
+    install -d ${D}${sbindir}
+	ln -s ${sbindir}/runit ${D}${sbindir}/init
 }
 do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit-init', 'do_runit_init_as_init', '', d)} "
