@@ -48,7 +48,7 @@ FILES:${PN} += "/service"
 
 # Do some additional OpenEmbedded specific tasks for install if we're told we're using runit-init as init.
 do_runit_init_as_init() {
-# Tie to init, so we run instead of busybox or sysvinit
+    # Tie to init, so we run instead of busybox or sysvinit
     install -d ${D}${sbindir}
     ln -s ${sbindir}/runit ${D}${sbindir}/init
     # FIXME : Handle the non-usrmerge context. *CHEAT*  Same thing as the previous...so it just works...
