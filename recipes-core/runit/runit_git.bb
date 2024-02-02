@@ -40,8 +40,8 @@ setup_runsvdir() {
     install -d -m 0755 ${D}/etc/runit/runsvdir
     install -d -m 0755 ${D}/etc/runit/runsvdir/default
     install -d -m 0755 ${D}/etc/runit/runsvdir/single
-    ln -s /etc/runit/runsvdir/default ${D}/etc/runit/runsvdir/current
-    ln -s /etc/sv ${D}/service
+    ln -s default ${D}/etc/runit/runsvdir/current
+    ln -s etc/sv ${D}/service
 }
 do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', 'setup_runsvdir', '', d)} "
 FILES:${PN} += "/service"
