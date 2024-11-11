@@ -3,7 +3,7 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 # This is an annex of the original metadata.  So, if you modify this file, bump
 # the number in this .bbappend to reflect the change and force a re-build.
-PR =. "+runit-r1"
+PR =. "+runit-r2"
 
 # Add the services set(s)...
 SRC_URI += " \
@@ -37,5 +37,5 @@ do_deletes() {
         rm -rvf ${D}/$DELETE
     done
 }
-do_install[postfuncs] = " do_deletes "
+do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'runit', 'do_deletes', '', d)} "
 
