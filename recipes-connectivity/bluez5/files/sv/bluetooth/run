@@ -1,4 +1,4 @@
 #!/bin/sh
-sv check messagebus > /dev/null || exit 1
-exec /usr/libexec/bluetooth/bluetoothd -n > /dev/null
+sv check messagebus || exit 1
+exec /usr/libexec/bluetooth/bluetoothd -n 2>&1
 
