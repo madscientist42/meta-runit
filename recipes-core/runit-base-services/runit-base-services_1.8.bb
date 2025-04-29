@@ -126,7 +126,7 @@ install_serial_consoles() {
         echo 'fi' >> ${conffile}
         echo 'BAUD_RATE='$baudrate >> ${conffile}
         echo 'TERM_NAME=vt100' >> ${conffile}
-        ln -s ${runit-svcdir}/getty-${ttydev} ${D}${runit-runsvdir}/default
+        ln -s ${runit-svcdir}/getty-console ${D}${runit-runsvdir}/default
     else
         # Process out our list.  This tells bootloader, initial kernel to use those
         # as consoles.  We want to do logins right now against all of them.
