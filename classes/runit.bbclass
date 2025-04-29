@@ -97,7 +97,9 @@ enable_default_services() {
     cd ${D}${runit-svcdir}
     for svc in * ; do
         # Catch situations where we don't have ANY files (* comes back for the globbing which is broken for this.)
-        if [ ! -d "$svc" ] ; then
+        # Also catch out directories that don't have a run file specified.  We do not want to process
+        # symlinks for content that is things like down files in with the main recipe and services files.
+        if [ ! -d "$svc" -o ! -e "$svc/run"] ; then
             continue
         fi
 
