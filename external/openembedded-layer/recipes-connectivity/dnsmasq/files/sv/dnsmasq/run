@@ -1,0 +1,2 @@
+#!/bin/sh
+exec dnsmasq -d -C /etc/dnsmasq.conf 2>&1

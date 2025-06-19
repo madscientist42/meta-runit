@@ -1,0 +1,2 @@
+#!/bin/sh
+netstat -nlp 2>&1 | grep -q "dnsmasq" || exit 1
